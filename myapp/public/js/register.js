@@ -75,7 +75,8 @@ function reg() {
         name: nam.value,
         email: email.value,
         pass: pass.value,
-        uvThresh: 100
+        uvThresh: 100,
+        actType: "NONE"
     };
     $.ajax({
         type: "POST",

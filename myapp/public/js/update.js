@@ -79,7 +79,7 @@ $uvThreshBtn.click(function () {
             if (data) {
                 localStorage.setItem('currentUser', JSON.stringify(data));
                 $uvthreshinput.val(data.uvThresh);
-                $("#UVSeth1").text("Set UV Threshold").css("color", "ghostwhite");
+                $("#UVSeth1").text("Configure Device").css("color", "ghostwhite");
                 $homebtn.trigger("click");
                 $("#UvThreshMenuScreen").fadeIn("slow").css("height", "260px");
                 $homediv.fadeOut("fast");

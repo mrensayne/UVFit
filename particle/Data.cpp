@@ -145,6 +145,6 @@ int Data::checkSpeed()
 
 void Data::setActType(String type)
 {
-	 this->actType = type; 
-	 Serial.println(this->actType);
+	this->actType = type;
+	Serial.println(this->actType);
 }

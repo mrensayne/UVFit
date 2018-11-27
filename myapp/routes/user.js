@@ -27,7 +27,8 @@ router.post("/register", function (req, res) {
                         name: req.body.name,
                         email: req.body.email,
                         pass: hash,
-                        uvThresh: req.body.uvThresh
+                        uvThresh: req.body.uvThresh,
+                        actType: req.body.actType
                     });
                     user.save(function (err, user) {
                         return res.status(201).send();
@@ -198,6 +199,8 @@ router.get("/DevSettings", function (req, res) {
             if (user.dev[x].devID == req.query.devID) {//We found the device
                 if (user.dev[x].devKey == req.query.apiKey) {// The api key is a match	
                     var tempAct = "";
+                    if (user.actType == "Auto")
+                        tempAct = "0";
                     if (user.actType == "Running")
                         tempAct = "1";
                     if (user.actType == "Jogging")

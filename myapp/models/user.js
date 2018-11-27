@@ -11,11 +11,11 @@ var User = db.model("user", {
         devKey: String
     }],
     activities: [{
-	    actTypeAct: String,
-	    deviceID: String,
-	    eventTime: String,
-	    eventDuration: Number,
-	    eventID: String,
+	actTypeAct: String,
+	deviceID: String,
+	eventTime: String,
+	eventDuration: Number,
+	eventID: String,
         longitude: [String],
         latitude: [String],
         UV: [String],

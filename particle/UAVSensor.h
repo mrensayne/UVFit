@@ -199,6 +199,10 @@ void settingsHandler(const char *event, const char *data) {
 	Serial.print(data[1]);
 	Serial.println("");
 
+	if (data[0] == '0')
+	{
+		SensorData.setActType("Auto");
+	}
 	if (data[1] == '1')
 	{
 		SensorData.setActType("Running");

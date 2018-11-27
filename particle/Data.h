@@ -8,6 +8,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+//These are particle changes
 class Data
 {
 private:
@@ -25,7 +26,7 @@ private:
 	int eventID{ 0 };
 	String eventTime{ "" };
 	//Determines the type of activity(Running, Jogging, Walking)
-	String actType{ "None" };
+	String actType{ "Auto" };
 public:
 	Data();
 	void getSensorData();
