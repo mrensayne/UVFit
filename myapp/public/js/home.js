@@ -24,6 +24,11 @@ $devicesub = $("#devicesumbitadd");
 $updatebtn = $("#updatebtn");
 $uvforecast = $("#uvforecast");
 $uvThreshBtn = $("#uvthreshbtn");
+$summarybtn = $("#summarybtn");
+$summary = $("#summary");
+$sumtimeval = $("#sumtimeval");
+$sumcalval = $("#sumcalval");
+$sumuvval = $("#sumuvval");
 
 
 function getUVForecast() {
@@ -45,6 +50,46 @@ function getUVForecast() {
     }).fail(function (data) {
         console.log("Fail: " + data);
     });
+}
+
+function summarize(){
+    var time = 0.0;
+    var uv = 0.0;
+    var cal = 0.0;
+    var temp = new Date(today);
+    if(temp.getDate() <= 7) var temp1 = new Date(temp.getFullYear(), temp.getMonth() - 1, 30 - (7 - temp.getDate()));
+    else var temp1 = new Date(temp.getFullYear(), temp.getMonth(), temp.getDate() - 7);
+    if (localStorage.auth) {
+        $.ajax({
+            type: "GET",
+            url: "http://ec2-18-206-119-178.compute-1.amazonaws.com:3000/home.html/user/account",
+            headers: { 'x-auth': localStorage.getItem("auth") },
+            response: "json"
+        }).done(function (data) {
+            if (data) {
+                localStorage.setItem('currentUser', JSON.stringify(data));
+                var user = data;
+                for (var i = 0; i < user.dev.length; i++) { // for all devices
+                    for (var ev = 0; ev < user.activities.length; ev++) {//for all events in a user
+                        var dat = new Date(user.activities[ev].eventTime);
+                        if (user.dev[i].devID == user.activities[ev].deviceID && ((dat < temp) && (temp1 < dat))) {// if the event matches the displaying deviceid
+                            time = time + user.activities[ev].eventDuration;
+                            uv = uv + user.activites[ev].uv[0];
+                            cal = cal + user.activities[ev].calories;
+                        }
+                    }
+                }
+            }
+        }).fail(function (data) {
+            localStorage.clear();
+        });
+    }
+    else {
+        localStorage.clear();
+    }
+    $sumtimeval.innerHTML = time + " minutes";
+    $sumuvval.innerHTML = uv;
+    $sumcalval.innerHTML = cal + " calories";
 }
 
 function getAndDisplayDeviceData() {
@@ -93,6 +138,7 @@ function initSiteForUser() {
     $("#uvthreshli").css("display", "inline-block");
     $('#deviceli').css("display", 'inline-block');
     $('#registerbtn').css('display', 'none');
+    summarybtn.css("display", "inline-block");
     var deviceDisplay = "";
     for (var i = 0; i < user.dev.length; i++) { // for all devices
         deviceDisplay += '<div>Device: ' + user.dev[i].devID + '</div>';
@@ -214,6 +260,12 @@ $uvThreshBtn.hover(function () {
     $uvThreshBtn.css("background-color", "red");
 }, function () {
     $uvThreshBtn.css("background-color", "#2d2d2d");
+});
+
+$summarybtn.hover(function() {
+    $summarybtn.css("background-color", "red");
+}, function () {
+    $summarybtn.css("background-color", "#2d2d2d");
 });
 
 
@@ -409,3 +461,51 @@ $logoutbtn.click(function () {
     location.reload(true);
 });
 
+$summarybtn.click(function () {
+    if (updateopen) {
+        $("#updatescreen").fadeOut("fast");
+        updateopen = false;
+    }
+    if (UVMenuOpen) {
+        $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
+        UVMenuOpen = false;
+    }
+    if (!homeopen && registeropen) {
+        safetochange = false;
+        $regdiv.animate({
+            opacity: 0,
+            marginTop: "+=1000"
+        }, 1000, function () {
+            $homediv.fadeIn("slow");
+            safetochange = true;
+        });
+    }
+    else if (!homeopen && loginopen) {
+        safetochange = false;
+        $logdiv.animate({
+            opacity: 0,
+            marginTop: "+=1000"
+        }, 1000, function () {
+            $homediv.fadeIn("slow");
+            safetochange = true;
+        });
+    }
+    else if (!homeopen && deviceopen) {
+        safetochange = false;
+
+        $devicediv.animate({
+            opacity: 0,
+            marginTop: "+=1000"
+        }, 1000, function () {
+            $homediv.fadeIn("slow");
+            safetochange = true;
+        });
+    }
+    else {
+        $homediv.fadeIn("slow");
+    }
+    homeopen = true;
+    registeropen = false;
+    loginopen = false;
+    deviceopen = false;
+});
