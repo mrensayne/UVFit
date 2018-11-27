@@ -53,12 +53,12 @@ function getUVForecast() {
     });
 }
 
-function summarize(){
+function summarize() {
     var time = 0.0;
     var uv = 0.0;
     var cal = 0.0;
-    var temp = new Date(today);
-    if(temp.getDate() <= 7) var temp1 = new Date(temp.getFullYear(), temp.getMonth() - 1, 30 - (7 - temp.getDate()));
+    var temp = new Date();
+    if (temp.getDate() <= 7) var temp1 = new Date(temp.getFullYear(), temp.getMonth() - 1, 30 - (7 - temp.getDate()));
     else var temp1 = new Date(temp.getFullYear(), temp.getMonth(), temp.getDate() - 7);
     if (localStorage.auth) {
         $.ajax({
@@ -70,17 +70,25 @@ function summarize(){
             if (data) {
                 localStorage.setItem('currentUser', JSON.stringify(data));
                 var user = data;
-                for (var i = 0; i < user.dev.length; i++) { // for all devices
-                    for (var ev = 0; ev < user.activities.length; ev++) {//for all events in a user
-                        var dat = new Date(user.activities[ev].eventTime);
-                        if (user.dev[i].devID == user.activities[ev].deviceID && ((dat < temp) && (temp1 < dat))) {// if the event matches the displaying deviceid
-                            time = time + user.activities[ev].eventDuration;
-                            uv = uv + user.activites[ev].uv[0];
-                            cal = cal + user.activities[ev].calories;
-                        }
+                for (var x = 0; x < user.activities.length;x++)
+                {//All Activities
+                    //We need to parse this because it was saved as a JSON inside of the object instead of as an integer array
+                    var UVarray = JSON.parse(user.activities[x].UV);
+                    //Every activity has a TOTAL duration. This duration can spam multiple activities, so to calculate this we need to just add up all datapoints grabbed total
+                    //Because we know the frequency of every datapoint is 1HZ
+                    time = time + UVarray.length;
+                    //calories are calculated per activity so we can simple add them up over all activities
+                    cal = cal + user.activities[x].calories;
+                    //We need an extra loop here to add up all UV integers in each activity
+                    for (var y = 0; y < UVarray.length; y++)
+                    {//All data points in an activity
+                        uv = uv + UVarray[y];
                     }
                 }
             }
+            $sumtimeval.html(time + " seconds");
+            $sumuvval.html(uv);
+            $sumcalval.html(cal + " calories");
         }).fail(function (data) {
             localStorage.clear();
         });
@@ -88,9 +96,7 @@ function summarize(){
     else {
         localStorage.clear();
     }
-    $sumtimeval.innerHTML = time + " minutes";
-    $sumuvval.innerHTML = uv;
-    $sumcalval.innerHTML = cal + " calories";
+
 }
 
 function getAndDisplayDeviceData() {
@@ -139,7 +145,7 @@ function initSiteForUser() {
     $("#uvthreshli").css("display", "inline-block");
     $('#deviceli').css("display", 'inline-block');
     $('#registerbtn').css('display', 'none');
-    summarybtn.css("display", "inline-block");
+    $summarybtn.css("display", "inline-block");
     var deviceDisplay = "";
     for (var i = 0; i < user.dev.length; i++) { // for all devices
         deviceDisplay += '<div>Device: ' + user.dev[i].devID + '</div>';
@@ -263,7 +269,7 @@ $uvThreshBtn.hover(function () {
     $uvThreshBtn.css("background-color", "#2d2d2d");
 });
 
-$summarybtn.hover(function() {
+$summarybtn.hover(function () {
     $summarybtn.css("background-color", "red");
 }, function () {
     $summarybtn.css("background-color", "#2d2d2d");
