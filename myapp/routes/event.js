@@ -12,12 +12,25 @@ router.post("/", function (req, res) {
             for (var i = 0; i < user.dev.length; i++) {
                 if (user.dev[i].devKey == req.body.apikey) {
                     console.log(JSON.stringify(req.body));
-                    User.update({ _id: user._id }, { $push: { activities: {eventTime: req.body.x, eventDuration: req.body.y, eventID: req.body.f, deviceID: req.body.a, longitude: req.body.b, latitude: req.body.c, UV: req.body.d, speed: req.body.e, actTypeAct: req.body.z } } }, function (err, user) {
-                        if (err) {
-                            return res.status(500).json("Error adding into db");
-                        }
-                        return res.status(200).json("Event Added!");
-                    });
+                    if(req.body.z == null) { //no type specified
+                        var act;
+                        if(req.body.e[0] < 5) act = "Jogging";
+                        else if (req.body.e[0] < 10) act = "Running";
+                        else act = "Biking";
+                        User.update({ _id: user._id }, { $push: { activities: {eventTime: req.body.x, eventDuration: req.body.y, eventID: req.body.f, deviceID: req.body.a, longitude: req.body.b, latitude: req.body.c, UV: req.body.d, speed: req.body.e, actTypeAct: act } } }, function (err, user) {
+                            if (err) {
+                                return res.status(500).json("Error adding into db");
+                            }
+                            return res.status(200).json("Event Added!");
+                        });
+                    } else {
+                        User.update({ _id: user._id }, { $push: { activities: {eventTime: req.body.x, eventDuration: req.body.y, eventID: req.body.f, deviceID: req.body.a, longitude: req.body.b, latitude: req.body.c, UV: req.body.d, speed: req.body.e, actTypeAct: req.body.z } } }, function (err, user) {
+                            if (err) {
+                                return res.status(500).json("Error adding into db");
+                            }
+                            return res.status(200).json("Event Added!");
+                        });
+                    }
                 }
             }
         }
