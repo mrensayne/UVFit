@@ -25,7 +25,7 @@ int pollcounter{ 0 };
 Input input;
 Data SensorData;
 StateMachine SM;
-std::vector<Data> Activities;
+std::vector<String> Packets;
 
 void setup() {
 	pinMode(startstopbtn, INPUT_PULLUP);
@@ -43,6 +43,7 @@ void loop() {
 	input = getInput();
 	if (input != Input::TRUEPOWER)
 	{
+		Packets.clear();
 		initUvThresh = true;
 		digitalWrite(PowerLED, LOW);
 	}
@@ -51,7 +52,7 @@ void loop() {
 		digitalWrite(PowerLED, HIGH);
 		while (true)
 		{//Lets loop inside the powered on state
-			//Serial.print("."); // Doing this to see if it crashes or wtf is going on
+		 //Serial.print("."); // Doing this to see if it crashes or wtf is going on
 			input = getInput();
 			if (input == Input::TRUEPOWER)
 			{//Power button pressed when device on so power off
@@ -67,11 +68,10 @@ void loop() {
 			if (SM.Tick(input, SensorData))
 			{ // Publish Flag Was High
 				Serial.println("Send Flag Was High From STate maching");
-			  //Setting this here because if we failed a send, we need to be able to try again the next time user manually sends data
+				//Setting this here because if we failed a send, we need to be able to try again the next time user manually sends data
 				responseGotten = true;
-				Activities.push_back(SensorData);
+				createPacket(SensorData);
 				SensorData.clear();
-				/*if (Particle.connected())*/
 				if (Particle.connected())
 				{
 					Serial.println("Particle Connected");
@@ -95,12 +95,12 @@ void loop() {
 			if (pollUploading && SM.getState() != State::SEND)
 			{
 				Serial.println("Polling Uploads is HIGH");
-				if (Activities.size() == 0)
+				if (Packets.size() == 0)
 				{//Making sure that we aren't polling when nothing is left to upload still due to late arrival of server response
-					Serial.println("Stopping polling because activities is empty");
+					Serial.println("Stopping polling because Buffer(Packets.size()) is empty");
 					pollUploading = false;
 				}
-				if (Particle.connected() && pollcounter > 1000)
+				if (Particle.connected() && pollcounter > 500)
 				{
 					Serial.println("Particle Connected and PollCounter is trying to upload");
 					pollcounter = 0;
@@ -116,9 +116,9 @@ void loop() {
 			if (TwentyFourHours >= 864000)
 			{//24 hours has passed
 				Serial.println("Clearing All Data due to 24 hours");
-				Activities.clear();
+				Packets.clear();
 			}
-			if (threshcounter >= 200)
+			if (threshcounter >= 200 && !pollUploading)
 			{// Commented out for testing, uncomment when done
 				Serial.println("Grabbing Thresh because of threshcounter");
 				Particle.publish("DevSettings", "", PRIVATE);
@@ -134,32 +134,30 @@ void loop() {
 bool uploadData()
 {
 	Serial.println("");
-	Serial.print("Activities.size() = ");
-	Serial.print(Activities.size());
+	Serial.print("Packets.size() = ");
+	Serial.print(Packets.size());
 	Serial.println("");
 	responseGotten = true;
 	int x{ 0 };
-	while (Activities.size() > 0)
+	int timeOut{ 0 };
+	while (Packets.size() > 0)
 	{
-		Serial.print("|");
 		if (responseGotten)
 		{
-			Serial.println("");
-			Serial.print("UPLOADING ACTIVITY: ");
-			Serial.print(x);
-			Serial.println("");
-			if (!postData(Activities[0]))
-			{//Unable to post because of network problem
-				Serial.println("Here is the problem");
-				pollUploading = true;
-				return false;
-			}
-			else
-			{//Post Successful
-				//Activities.erase(Activities.begin()); 
-				x++;
-			}
+			Serial.println(Packets[0]);
+			responseGotten = false;
+			Particle.publish("DataRead", Packets[0], PRIVATE);
+			timeOut = 0;
 		}
+		else if (timeOut >= 40)
+		{
+			Serial.println("");
+			Serial.println("Timed Out");
+			pollUploading = true;
+			return false;
+		}
+		Serial.print("/");
+		timeOut++;
 		delay(100);
 	}
 	return true;
@@ -182,46 +180,25 @@ Input getInput()
 	return Input::IDLE;
 }
 
-bool postData(Data data)
+void createPacket(Data data)
 {
 	x = 0;
 	while (x < data.size())
 	{
-		if (responseGotten)
-		{
-			DelayCounter = 0;
-			responseGotten = false;
-			Serial.println(data.toPublishString(x));
-			Particle.publish("DataRead", data.toPublishString(x), PRIVATE);
-		}
-		else {
-			if (DelayCounter > 20)
-			{// No Wifi Signal Found or Server Down Time Out
-				Serial.println("Postdata() Timed out");
-				//Activities.push_back(data);
-				x = 0;
-				DelayCounter = 0;
-				return false;
-			}
-			else
-			{// No Wifi Signal Found or Server Down
-				DelayCounter++;
-				Serial.println("Delayed");
-			}
-		}
-		delay(200);
+		Packets.push_back(data.toPublishString(x));
+		x += 5;
 	}
-	x = 0;
-	DelayCounter = 0;
-	//Activities.erase(Activities.begin());
-	return true;
 }
 
 
 void myHandler(const char *event, const char *data) {
 	responseGotten = true;
-	Activities.erase(Activities.begin());
-	x += 5;
+	Serial.print("Packet Size In Response = ");
+	Serial.println(Packets.size());
+	if (Packets.size() != 0)
+	{
+		Packets.erase(Packets.begin());
+	}
 	// Formatting output
 	String output = String::format("Response from Post:\n  %s\n", data);
 	// Log to serial console
@@ -269,13 +246,4 @@ void settingsHandler(const char *event, const char *data) {
 	Serial.print(atoi(uvData));
 	Serial.println("");
 	SM.setUVThreshHold(atoi(uvData));
-}
-
-void ResetWiFiConnection()
-{
-	WiFi.off();
-	delay(10);
-	WiFi.on();
-	WiFi.connect();
-	Particle.connect();
 }
