@@ -1,0 +1,334 @@
+body {
+    touch-action: manipulation;
+    background-color: #1c1f21;
+    width: 99%;
+}
+
+#backgroundimg {
+    background-image: url("../images/c7cac9bdfcaae2fc41bd20df634416e1.jpg");
+    top: 50px;
+    position: fixed;
+    background-size: cover;
+    height: 100%;
+}
+
+#Logo {
+    padding: 0;
+    display: block;
+    margin: 0 auto;
+    max-height: 50%;
+    max-width: 50%;
+}
+
+#uvforecast {
+    /*table isn't centered without this for some reason on desktop. works fine on mobile*/
+    margin-left: 40%;
+    margin-right: 40%;
+}
+
+#nav {
+    background-color: #C0C0C0;
+    margin-top: 3px;
+    text-align: center;
+    display: block;
+}
+
+ul {
+    margin-top: 0px;
+}
+
+li {
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: inline-block;
+    font-family: 'Microsoft JhengHei UI';
+    font-size: 16px;
+    font-weight: bold;
+    color: ghostwhite;
+}
+
+a {
+    color: ghostwhite;
+    padding: 5px;
+    text-decoration: none;
+    background-color: #2d2d2d;
+    border: 2px solid grey;
+}
+
+#ContentDiv {
+    text-align: center;
+    position: fixed;
+    height: 100%;
+    width: 99%;
+}
+
+#deviceaddscreen {
+    display: none;
+    background-color: rgba(28,31,33,.75);
+    text-align: center;
+    color: ghostwhite;
+    font-family: 'Microsoft JhengHei UI';
+    height: 200px;
+    width: 500px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+#registerscreen {
+    display: none;
+    background-color: rgba(28,31,33,.75);
+    text-align: center;
+    color: ghostwhite;
+    font-family: 'Microsoft JhengHei UI';
+    height: 400px;
+    width: 500px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+#ActTypeSelect {
+    display: block;
+    width: 400px;
+}
+
+#homescreen {
+    text-align: center;
+    color: ghostwhite;
+    font-size: 20px;
+    font-family: 'Microsoft JhengHei UI';
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#loginscreen {
+    display: none;
+    background-color: rgba(28,31,33,.75);
+    text-align: center;
+    color: ghostwhite;
+    font-family: 'Microsoft JhengHei UI';
+    height: 280px;
+    width: 500px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+#deviceli {
+    display: none;
+}
+
+#userInfoDiv {
+    color: ghostwhite;
+    min-height: 30px;
+    width: 100%;
+    font-family: 'Microsoft JhengHei UI';
+}
+
+    #userInfoDiv ul {
+        position: absolute;
+        right: 10px;
+        padding: 5px;
+    }
+
+#logtoggleout, #updateli, #uvthreshli {
+    display: none;
+}
+
+select {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+#updatescreen, #UvThreshMenuScreen {
+    display: none;
+    height: 300px;
+    width: 500px;
+    color: ghostwhite;
+    font-family: 'Microsoft JhengHei UI';
+    background-color: rgba(28,31,33,1);
+    text-align: center;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+#inlineBtn {
+    display: inline;
+}
+
+input {
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    width: inherit;
+    margin-bottom: 8px;
+    padding: 6px;
+    box-sizing: border-box;
+    background-color: white;
+    text-align: center;
+}
+
+.form {
+    margin: auto;
+    width: 400px;
+    text-align: center;
+}
+
+input[type=submit] {
+    border: none;
+    background-color: deepskyblue;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+#formErrors {
+    display: none;
+    color: red;
+    text-align: center;
+}
+
+
+div {
+    text-align: center;
+}
+
+@media screen and (max-width: 800px) {
+    #homescreen {
+        text-align: center;
+        color: ghostwhite;
+        font-family: 'Microsoft JhengHei UI';
+        margin-left: 10vw;
+        margin-right: 10vw;
+    }
+
+    #registerscreen {
+        display: none;
+        background-color: rgba(28,31,33,.75);
+        text-align: center;
+        color: ghostwhite;
+        font-family: 'Microsoft JhengHei UI';
+        height: 80vh;
+        width: 100vw;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #loginscreen {
+        display: none;
+        background-color: rgba(28,31,33,.75);
+        text-align: center;
+        color: ghostwhite;
+        font-family: 'Microsoft JhengHei UI';
+        height: 50vh;
+        width: 100vw;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #userInfoDiv {
+        color: ghostwhite;
+        min-height: 30px;
+        width: 100%;
+        font-family: 'Microsoft JhengHei UI';
+    }
+
+        #userInfoDiv ul {
+            position: absolute;
+            right: 10vw;
+            padding: 5px;
+        }
+
+    .form {
+        margin: auto;
+        width: 400px;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #homescreen {
+        text-align: center;
+        color: ghostwhite;
+        font-family: 'Microsoft JhengHei UI';
+        margin-left: 20vw;
+        margin-right: 20vw;
+    }
+
+    #registerscreen {
+        display: none;
+        background-color: rgba(28,31,33,.75);
+        text-align: center;
+        color: ghostwhite;
+        font-family: 'Microsoft JhengHei UI';
+        height: 60%;
+        width: 99%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #loginscreen {
+        display: none;
+        background-color: rgba(28,31,33,.75);
+        text-align: center;
+        color: ghostwhite;
+        font-family: 'Microsoft JhengHei UI';
+        height: 50vh;
+        width: 99%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    #userInfoDiv {
+        color: ghostwhite;
+        min-height: 30px;
+        width: 100%;
+        font-family: 'Microsoft JhengHei UI';
+    }
+
+        #userInfoDiv ul {
+            position: absolute;
+            right: 5vw;
+            padding: 5px;
+        }
+
+    .form {
+        margin: auto;
+        width: 90%;
+        text-align: center;
+    }
+}

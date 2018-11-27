@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>HomePage</title>
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link href="css/home.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="userInfoDiv">
+        <ul>
+            <li id="updateli"><a id="updatebtn" href="#">Update</a></li>
+            <li id="logtogglein"><a id="loginbtn" href="#">Login</a></li>
+            <li id="logtoggleout"><a id="logoutbtn" href="#">Logout</a></li>
+            <li id="userInfo">Not Logged In</li>
+        </ul>
+    </div>
+    <div id="backgroundimg">
+        <img id="Logo" src="images/LogoText.png" alt="Logo" />
+        <div id="nav">
+            <ul>
+                <li><a id="homebtn" href="#">Home</a></li>
+                <li id="deviceli"><a id="AddDevicebtn" href="#">Add Device</a></li>
+                <li id="uvthreshli"><a id="uvthreshbtn" href="#">Set UV Threshold</a></li>
+                <li id="registerbtnli"><a id="registerbtn" href="#">Register</a></li>
+            </ul>
+        </div>
+        <div id="ContentDiv">
+            <div id="homescreen">
+                <h1>Home Screen</h1>
+                <h2>Devices</h2>
+                <h2>UV Forceast</h2>
+                <div id="uvforecast"></div>
+            </div>
+            <div id="UvThreshMenuScreen">
+                <h1 id="UVSeth1">Configure Activity</h1>
+                <div class="form">
+                    <label for="ActTypeSelect">Activity Type</label> <br>
+                    <select id="ActTypeSelect">
+                        <option id="running" value="Running">
+                            Running
+                        </option>
+                        <option id="jogging" value="Jogging">
+                            Jogging
+                        </option>
+                        <option id="walking" value="Walking">
+                            Walking
+                        </option>
+                    </select>
+                    <label for="UVThresholdSet">UV Threshold</label> <br>
+                    <input type="number" name="UVThresholdSet" step="1" id="UVThresholdSet" min="0"><br>
+                    <div id="formErrorsupdate">
+                    </div>
+                    <input type="submit" name="UvThreshSubmit" id="UvThreshSubmit" value="Update" />
+                </div>
+            </div>            <div id="updatescreen">
+                <h1 id="updateh1">Update Account</h1>
+                <div class="form">
+                    <label for="fullNameupdate">Full Name</label> <br>
+                    <input type="text" name="fullNameupdate" id="fullNameupdate"><br>
+                    <label for="emailupdate">Email</label> <br>
+                    <input type="email" name="emailupdate" id="emailupdate"><br>
+                    <select id="deviceselect"></select>
+                    <div id="formErrorsupdate">
+                    </div>
+                    <div id="inlineBtn">
+                        <input type="submit" name="update" id="update" value="Update" />
+                        <input type="submit" name="removeDev" id="removeDev" value="Remove Device" />
+                    </div>
+                </div>
+            </div>
+            <div id="registerscreen">
+                <h1 id="userh1">User Registration</h1>
+                <div class="form">
+                    <label for="fullName">Full Name</label> <br>
+                    <input type="text" name="fullName" id="fullName"><br>
+                    <label for="email">Email</label> <br>
+                    <input type="email" name="email" id="email"><br>
+                    <label for="password">Password</label> <br>
+                    <input type="password" name="password" id="password"><br>
+                    <label for="passwordConfirm">Confirm Password</label> <br>
+                    <input type="password" name="passwordConfirm" id="passwordConfirm"><br>
+                    <div id="formErrors">
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Register" />
+                </div>
+            </div>
+            <div id="loginscreen">
+                <h1 id="userh1login">User Login</h1>
+                <div class="form">
+                    <label for="email">Email</label> <br>
+                    <input type="email" name="email" id="loginemail"><br>
+                    <label for="password">Password</label> <br>
+                    <input type="password" name="password" id="loginpassword"><br>
+                    <input type="submit" name="loginuserbtn" id="loginuserbtn" value="Log In" />
+                    <div id="loginerror" color="red"></div>
+                </div>
+            </div>
+            <div id="deviceaddscreen">
+                <h1 id="deviceaddh1">Add Device</h1>
+                <div id="devapiinputdiv" class="form">
+                    <label id="deviceinputlabel" for="deviceinput">Device ID</label> <br>
+                    <input type="text" name="deviceinput" id="deviceinput"><br>
+                    <input type="submit" name="devicesumbitadd" id="devicesumbitadd" value="Add Device" />
+                    <div id="deviceerror" color="red"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/home.js" defer></script>
+    <script src="js/register.js" defer></script>
+    <script src="js/login.js" defer></script>
+    <script src="js/update.js" defer></script>
+
+</body>
+</html>
