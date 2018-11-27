@@ -7,7 +7,8 @@
 #include <vector>
 
 int startstopbtn = A0;
-int internettestbtn = D5;
+int PowerOnBtn = D5;
+int PowerLED = D6;
 int x = 0;
 int eventID = 0;
 int UVThreshHold = 0;
@@ -15,20 +16,21 @@ int threshcounter{ 0 };
 int DelayCounter{ 0 };
 bool responseGotten = true;
 bool initUvThresh = true;
-bool Internet = true;
+bool PowerOn = true;
 bool pollUploading = false;
 int TwentyFourHours{ 0 };
 int pingcounter{ 0 };
 int pollcounter{ 0 };
 
-
+Input input;
 Data SensorData;
 StateMachine SM;
 std::vector<Data> Activities;
 
 void setup() {
 	pinMode(startstopbtn, INPUT_PULLUP);
-	pinMode(internettestbtn, INPUT_PULLUP);
+	pinMode(PowerOnBtn, INPUT_PULLUP);
+	pinMode(PowerLED, OUTPUT);
 	SensorData.init();
 	SM.initStatusLed();
 	Serial.begin(9600);
@@ -38,52 +40,71 @@ void setup() {
 
 
 void loop() {
-	if (initUvThresh)
+	input = getInput();
+	if (input != Input::TRUEPOWER)
 	{
-		Particle.publish("DevSettings", "", PRIVATE);
-		initUvThresh = false;
+		initUvThresh = true;
+		digitalWrite(PowerLED, LOW);
 	}
-	if (SM.Tick(getInput(), SensorData, Internet))
-	{ // Publish Flag Was High
-		Activities.push_back(SensorData);
-		SensorData.clear();
-		if (Particle.connected())
-		{
-			pollUploading = false;
-			uploadData();
-			TwentyFourHours = 0;
+	else
+	{//Power button is truly pressed
+		digitalWrite(PowerLED, HIGH);
+		while (true)
+		{//Lets loop inside the powered on state
+			input = getInput();
+			if (input == Input::TRUEPOWER)
+			{//Power button pressed when device on so power off
+				break;
+			}
+			if (initUvThresh)
+			{
+				Particle.publish("DevSettings", "", PRIVATE);
+				initUvThresh = false;
+			}
+			if (SM.Tick(input, SensorData))
+			{ // Publish Flag Was High
+				Activities.push_back(SensorData);
+				SensorData.clear();
+				if (Particle.connected())
+				{
+					pollUploading = false;
+					uploadData();
+					TwentyFourHours = 0;
+				}
+				else
+				{
+					pollUploading = true;
+					Serial.println("Particle Unable to upload");
+				}
+			}
+			if (pollUploading && SM.getState() != State::SEND)
+			{
+				if (Particle.connected() && pollcounter > 100)
+				{
+					pollcounter = 0;
+					pollUploading = false;
+					uploadData();
+				}
+				else
+				{
+					pollcounter++;
+					TwentyFourHours++;
+				}
+			}
+			if (TwentyFourHours >= 864000)
+			{//24 hours has passed
+				Activities.clear();
+			}
+			if (threshcounter >= 200)
+			{// Commented out for testing, uncomment when done
+				Particle.publish("DevSettings", "", PRIVATE);
+				threshcounter = 0;
+			}
+			threshcounter++;
+			delay(100);
 		}
-		else
-		{
-			pollUploading = true;
-			Serial.println("Particle Unable to upload");
-		}
 	}
-	if (pollUploading && SM.getState() != State::SEND)
-	{
-		if (Particle.connected() && pollcounter > 100)
-		{
-			pollcounter = 0;
-			pollUploading = false;
-			uploadData();
-		}
-		else
-		{
-			pollcounter++;
-			TwentyFourHours++;
-		}
-	}
-	if (TwentyFourHours >= 864000)
-	{//24 hours has passed
-		Activities.clear();
-	}
-	if (threshcounter >= 200)
-	{// Commented out for testing, uncomment when done
-		Particle.publish("DevSettings", "", PRIVATE);
-		threshcounter = 0;
-	}
-	threshcounter++;
-	delay(100);
+	delay(200);
 }
 
 void uploadData()
@@ -119,11 +140,11 @@ Input getInput()
 		while (digitalRead(startstopbtn) == 0);
 		return Input::POWER;
 	}
-	if (digitalRead(internettestbtn) == 0)
+	if (digitalRead(PowerOnBtn) == 0)
 	{
-		while (digitalRead(internettestbtn) == 0);
-		Serial.println("Internet Btn");
-		return Input::INTERNET;
+		while (digitalRead(PowerOnBtn) == 0);
+		Serial.println("PowerOn Btn");
+		return Input::TRUEPOWER;
 	}
 	return Input::IDLE;
 }
@@ -195,11 +216,11 @@ void settingsHandler(const char *event, const char *data) {
 	Serial.print("Updated UV Threshold: ");
 
 	int index{ 0 };
-	
+
 	for (int x = 0; x < strlen(data); x++)
 	{
 		if (data[x] == ',')
-			index = x+1;
+			index = x + 1;
 	}
 	String uvData = "";
 	for (int x = index; x < strlen(data) - 1; x++)

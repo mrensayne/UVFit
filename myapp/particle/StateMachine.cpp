@@ -5,16 +5,16 @@ StateMachine::StateMachine()
 
 }
 
-bool StateMachine::Tick(Input input, Data& data, bool &test)
+bool StateMachine::Tick(Input input, Data& data)
 {
-	if (input == Input::INTERNET)
-	{
-		if (test)
-			test = false;
-		else
-			test = true;
-		return false;
-	}
+	//if (input == Input::INTERNET)
+	//{
+	//	if (test)
+	//		test = false;
+	//	else
+	//		test = true;
+	//	return false;
+	//}
 	if (input == Input::POWER && state != State::OFF)
 	{// Power button was pressed so send to server and power off
 		state = State::SEND;
@@ -27,7 +27,7 @@ bool StateMachine::Tick(Input input, Data& data, bool &test)
 		if (input == Input::POWER)
 		{// Power button pressed
 			state = State::INIT;
-			Tick(Input::IDLE, data, test);
+			Tick(Input::IDLE, data);
 		}
 		else
 		{// Power button NOT pressed
@@ -40,7 +40,7 @@ bool StateMachine::Tick(Input input, Data& data, bool &test)
 		setLedStatus();
 		//Serial.println(data.toPublishString());
 		state = State::OFF;
-		Tick(Input::IDLE, data, test);
+		Tick(Input::IDLE, data);
 		return true;
 	}
 	case State::IDLE:
@@ -71,7 +71,7 @@ bool StateMachine::Tick(Input input, Data& data, bool &test)
 	case State::INIT:
 	{// Where we can init device on Bootup
 		state = State::IDLE;
-		Tick(Input::IDLE, data, test);
+		Tick(Input::IDLE, data);
 		break;
 	}
 	case State::SENSE:

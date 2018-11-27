@@ -3,7 +3,7 @@
 #include "Data.h"
 
 enum class State { IDLE, INIT, OFF, SENSE, SEND, PAUSE };
-enum class Input { POWER, IDLE, INTERNET };
+enum class Input { POWER, IDLE, TRUEPOWER };
 
 //Were gonna change things and find a problem
 class StateMachine
@@ -26,7 +26,7 @@ public:
 	State getState() { return state; }
 	void initStatusLed();
 	void setUVThreshHold(int thresh);
-	bool Tick(Input input, Data& data, bool &test); // bool is the publish flag
+	bool Tick(Input input, Data& data); // bool is the publish flag
 };
 
 #endif // !STATEMACHINE_H

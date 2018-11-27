@@ -8,7 +8,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-//These are particle changes
 class Data
 {
 private:
