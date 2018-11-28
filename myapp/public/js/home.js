@@ -72,17 +72,20 @@ function summarize() {
                 var user = data;
                 for (var x = 0; x < user.activities.length;x++)
                 {//All Activities
-                    //We need to parse this because it was saved as a JSON inside of the object instead of as an integer array
-                    var UVarray = JSON.parse(user.activities[x].UV);
-                    //Every activity has a TOTAL duration. This duration can spam multiple activities, so to calculate this we need to just add up all datapoints grabbed total
-                    //Because we know the frequency of every datapoint is 1HZ
-                    time = time + UVarray.length;
-                    //calories are calculated per activity so we can simple add them up over all activities
-                    cal = cal + user.activities[x].calories;
-                    //We need an extra loop here to add up all UV integers in each activity
-                    for (var y = 0; y < UVarray.length; y++)
-                    {//All data points in an activity
-                        uv = uv + UVarray[y];
+                    var dat = new Date(user.activities[x].eventTime);
+                    if(dat < temp && temp1 < dat) {
+                        //We need to parse this because it was saved as a JSON inside of the object instead of as an integer array
+                        var UVarray = JSON.parse(user.activities[x].UV);
+                        //Every activity has a TOTAL duration. This duration can spam multiple activities, so to calculate this we need to just add up all datapoints grabbed total
+                        //Because we know the frequency of every datapoint is 1HZ
+                        time = time + UVarray.length;
+                        //calories are calculated per activity so we can simple add them up over all activities
+                        cal = cal + user.activities[x].calories;
+                        //We need an extra loop here to add up all UV integers in each activity
+                        for (var y = 0; y < UVarray.length; y++)
+                        {//All data points in an activity
+                            uv = uv + UVarray[y];
+                        }
                     }
                 }
             }
@@ -97,6 +100,142 @@ function summarize() {
         localStorage.clear();
     }
 
+}
+
+function summarizeLocal() {
+    var dist = 0.0;
+    var uv = 0.0;
+    var cal = 0.0;
+    var speed = 0.0;
+    var UVavg = 0.0;
+    var distAvg = 0.0;
+    var calAvg = 0.0;
+    var actNum = 0.0;
+    var i = 0;
+    var temp = new Date();
+    if (temp.getDate() <= 7) var temp1 = new Date(temp.getFullYear(), temp.getMonth() - 1, 30 - (7 - temp.getDate()));
+    else var temp1 = new Date(temp.getFullYear(), temp.getMonth(), temp.getDate() - 7);
+    //need to alter the API to allow pulling *all* users
+    if (localStorage.auth) {
+        $.ajax({
+            type: "GET",
+            url: "http://ec2-18-206-119-178.compute-1.amazonaws.com:3000/home.html/user/account",
+            headers: { 'x-auth': localStorage.getItem("auth") },
+            response: "json"
+        }).done(function (data) {
+            if (data) {
+                localStorage.setItem('currentUser', JSON.stringify(data));
+                for(var z = 0; z < data.length; z++) { //change this based on how we update the API
+                    var user = data;
+                    if(Math.ceil(JSON.parse(user.activities[0].longitude)[0]) == Math.ceil(lon)){ //"local" check
+                        for (var x = 0; x < user.activities.length;x++)
+                        {
+                            actNum++;
+                            var UVarray = JSON.parse(user.activities[x].UV);
+                            var speedArray = JSON.parse(user.activies[x].speed);
+                            for (var y = 0; y < speedArray.length; y++)
+                            {
+                                speed = speed + speedArray[y];
+                            }
+                            speed = speed / speedArray.length;
+                            dist = UVarray.length * speed; //time * speed average
+                            cal = cal + user.activities[x].calories;
+                            //We need an extra loop here to add up all UV integers in each activity
+                            for (var y = 0; y < UVarray.length; y++)
+                            {//All data points in an activity
+                                uv = uv + UVarray[y];
+                                i++;
+                            }
+                        }
+                        UVavg = UVavg + uv;
+                        distAvg = distAvg + dist;
+                        calAvg = calAvg + cal;
+                        uv = 0.0;
+                        dist = 0.0;
+                        cal = 0.0;
+                        speed = 0.0;
+                    }
+                }    
+                UVavg = UVavg / i;
+                distAvg = distAvg / actNum;
+                calAvg = calAvg / actNum;
+            }
+
+            //update html with that data
+        }).fail(function (data) {
+            localStorage.clear();
+        });
+    }
+    else {
+        localStorage.clear();
+    }
+}
+
+function summarizeGlobal() {
+    var dist = 0.0;
+    var uv = 0.0;
+    var cal = 0.0;
+    var speed = 0.0;
+    var UVavg = 0.0;
+    var distAvg = 0.0;
+    var calAvg = 0.0;
+    var actNum = 0.0;
+    var i = 0;
+    var temp = new Date();
+    if (temp.getDate() <= 7) var temp1 = new Date(temp.getFullYear(), temp.getMonth() - 1, 30 - (7 - temp.getDate()));
+    else var temp1 = new Date(temp.getFullYear(), temp.getMonth(), temp.getDate() - 7);
+    //need to alter the API to allow pulling *all* users
+    if (localStorage.auth) {
+        $.ajax({
+            type: "GET",
+            url: "http://ec2-18-206-119-178.compute-1.amazonaws.com:3000/home.html/user/account",
+            headers: { 'x-auth': localStorage.getItem("auth") },
+            response: "json"
+        }).done(function (data) {
+            if (data) {
+                localStorage.setItem('currentUser', JSON.stringify(data));
+                for(var z = 0; z < data.length; z++) { //change this based on how we update the API
+                    var user = data;
+                    for (var x = 0; x < user.activities.length;x++)
+                    {
+                        actNum++;
+                        var UVarray = JSON.parse(user.activities[x].UV);
+                        var speedArray = JSON.parse(user.activies[x].speed);
+                        for (var y = 0; y < speedArray.length; y++)
+                        {
+                            speed = speed + speedArray[y];
+                        }
+                        speed = speed / speedArray.length;
+                        dist = UVarray.length * speed; //time * speed average
+                        cal = cal + user.activities[x].calories;
+                        //We need an extra loop here to add up all UV integers in each activity
+                        for (var y = 0; y < UVarray.length; y++)
+                        {//All data points in an activity
+                            uv = uv + UVarray[y];
+                            i++;
+                        }
+                    }
+                    UVavg = UVavg + uv;
+                    distAvg = distAvg + dist;
+                    calAvg = calAvg + cal;
+                    uv = 0.0;
+                    dist = 0.0;
+                    cal = 0.0;
+                    speed = 0.0;
+                }
+                UVavg = UVavg / i;
+                distAvg = distAvg / actNum;
+                calAvg = calAvg / actNum;
+            }
+
+            //update html with that data
+        }).fail(function (data) {
+            localStorage.clear();
+        });
+    }
+    else {
+        localStorage.clear();
+    }
 }
 
 function getAndDisplayDeviceData() {
