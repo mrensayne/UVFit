@@ -261,48 +261,4 @@ router.delete("/removeDev", function (req, res) {
     }
 });
 
-router.post("/passChange", function (req, res) {
-    console.log("In Pass");
-    if (!req.headers["email"] || !req.headers["password"] || !req.headers["pass"]) {
-        return res.status(501).json("Missing Data");
-    }
-    var email = req.headers["email"];
-    var password = req.headers["password"];
-    var pass = req.headers["pass"];
-    User.findOne({ email: email }, function (err, user) {
-        if (err) {
-            res.status(500).send(err);
-        }
-        else if (!user) {
-            res.status(401).json({ success: false, error: "The email or password provided was invalid." });
-        }
-        else {
-            bcrypt.compare(password, user.pass, function (err, valid) {
-                if (err) {
-                    res.status(401).json({ person: {}, success: false, error: "Error authenticating. Please contact support." });
-                }
-                else if (valid) {
-                    bcrypt.hash(pass, null, null, function (err, hash) {
-                        User.update({ _id: user._id }, { $set: { pass: hash } }, function (err, userx) {
-                            if (err) {
-                                return res.status(500).json("Error in DB update");
-                            }
-                            if (userx) {
-                                User.findOne({ email: email }, function (err, usery) {
-                                    return res.status(200).json({ person: usery, auth: jwt.encode(usery, secret) });
-                                })
-                            }
-                        })
-
-                    });
-                }
-                else {
-                    return res.status(403).json("Invalid Email Or Password");
-                }
-            });
-        }
-    });
-});
-
-
 module.exports = router;

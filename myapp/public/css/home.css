@@ -171,9 +171,7 @@ select {
     margin-bottom: 15px;
 }
 
-
-
-#updatescreen, #UvThreshMenuScreen, #PassChangeScreen {
+#updatescreen, #UvThreshMenuScreen {
     display: none;
     height: 300px;
     width: 500px;
