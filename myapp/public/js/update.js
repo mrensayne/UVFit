@@ -5,6 +5,9 @@ $deviceselect = $("#deviceselect");
 $update = $("#update");
 $remdevbtn = $("#removeDev");
 $uvthreshinput = $("#UVThresholdSet");
+$changePassBtn = $("#UpdPass");
+$newPassSubmit = $("#currPassSubmit");
+
 
 $updatebtn.click(function () {
     if (updateopen) {
@@ -140,5 +143,36 @@ $remdevbtn.click(function () {
         setTimeout(function () { $homebtn.trigger("click"); }, 2000);
     }).fail(function (data) {
         $("#updateh1").text(data.responseJSON).css("color", "red");
+    });
+});
+
+$changePassBtn.click(function() {
+    $homebtn.trigger("click");
+    $("#PassChangeScreen").fadeIn("fast");
+    changepass = true;
+});
+
+$newPassSubmit.click(function () {
+    var user = JSON.parse(localStorage.getItem("currentUser"));
+    if (!user)
+        return;       
+    var request = { email: user.email, password: $("#currPass").val(), pass: $("#newPass").val() };
+    $.ajax({
+        type: "POST",
+        url: "http://ec2-18-206-119-178.compute-1.amazonaws.com:3000/home.html/user/passChange",
+        headers: request,
+        contentType: "application/json",
+        response: "application/json"
+    }).done(function (data) {
+        if (data) {
+            localStorage.setItem("currentUser", JSON.stringify(data.person));
+            localStorage.setItem("auth", data.auth);
+            $("#passh1").text("Successfully Updated Password").css("color", "green");
+            setTimeout(function () { $homebtn.trigger("click"); }, 2000);
+        }
+    }).fail(function (data) {
+            $("#passh1").text(data.responseJSON);
+            $("#passh1").css("color", "red");
+        
     });
 });

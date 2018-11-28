@@ -8,6 +8,7 @@ var deviceopen = false;
 var UVMenuOpen = false;
 var updateopen = false;
 var summaryopen = false;
+var changepass = false;
 var lat = 0.0;
 var lon = 0.0;
 $homebtn = $("#homebtn");
@@ -70,10 +71,9 @@ function summarize() {
             if (data) {
                 localStorage.setItem('currentUser', JSON.stringify(data));
                 var user = data;
-                for (var x = 0; x < user.activities.length;x++)
-                {//All Activities
+                for (var x = 0; x < user.activities.length; x++) {//All Activities
                     var dat = new Date(user.activities[x].eventTime);
-                    if(dat < temp && temp1 < dat) {
+                    if (dat < temp && temp1 < dat) {
                         //We need to parse this because it was saved as a JSON inside of the object instead of as an integer array
                         var UVarray = JSON.parse(user.activities[x].UV);
                         //Every activity has a TOTAL duration. This duration can spam multiple activities, so to calculate this we need to just add up all datapoints grabbed total
@@ -82,8 +82,7 @@ function summarize() {
                         //calories are calculated per activity so we can simple add them up over all activities
                         cal = cal + user.activities[x].calories;
                         //We need an extra loop here to add up all UV integers in each activity
-                        for (var y = 0; y < UVarray.length; y++)
-                        {//All data points in an activity
+                        for (var y = 0; y < UVarray.length; y++) {//All data points in an activity
                             uv = uv + UVarray[y];
                         }
                     }
@@ -125,24 +124,21 @@ function summarizeLocal() {
         }).done(function (data) {
             if (data) {
                 localStorage.setItem('currentUser', JSON.stringify(data));
-                for(var z = 0; z < data.length; z++) { //change this based on how we update the API
+                for (var z = 0; z < data.length; z++) { //change this based on how we update the API
                     var user = data;
-                    if(Math.ceil(JSON.parse(user.activities[0].longitude)[0]) == Math.ceil(lon)){ //"local" check
-                        for (var x = 0; x < user.activities.length;x++)
-                        {
+                    if (Math.ceil(JSON.parse(user.activities[0].longitude)[0]) == Math.ceil(lon)) { //"local" check
+                        for (var x = 0; x < user.activities.length; x++) {
                             actNum++;
                             var UVarray = JSON.parse(user.activities[x].UV);
                             var speedArray = JSON.parse(user.activies[x].speed);
-                            for (var y = 0; y < speedArray.length; y++)
-                            {
+                            for (var y = 0; y < speedArray.length; y++) {
                                 speed = speed + speedArray[y];
                             }
                             speed = speed / speedArray.length;
                             dist = UVarray.length * speed; //time * speed average
                             cal = cal + user.activities[x].calories;
                             //We need an extra loop here to add up all UV integers in each activity
-                            for (var y = 0; y < UVarray.length; y++)
-                            {//All data points in an activity
+                            for (var y = 0; y < UVarray.length; y++) {//All data points in an activity
                                 uv = uv + UVarray[y];
                                 i++;
                             }
@@ -155,7 +151,7 @@ function summarizeLocal() {
                         cal = 0.0;
                         speed = 0.0;
                     }
-                }    
+                }
                 UVavg = UVavg / i;
                 distAvg = distAvg / actNum;
                 calAvg = calAvg / actNum;
@@ -194,23 +190,20 @@ function summarizeGlobal() {
         }).done(function (data) {
             if (data) {
                 localStorage.setItem('currentUser', JSON.stringify(data));
-                for(var z = 0; z < data.length; z++) { //change this based on how we update the API
+                for (var z = 0; z < data.length; z++) { //change this based on how we update the API
                     var user = data;
-                    for (var x = 0; x < user.activities.length;x++)
-                    {
+                    for (var x = 0; x < user.activities.length; x++) {
                         actNum++;
                         var UVarray = JSON.parse(user.activities[x].UV);
                         var speedArray = JSON.parse(user.activies[x].speed);
-                        for (var y = 0; y < speedArray.length; y++)
-                        {
+                        for (var y = 0; y < speedArray.length; y++) {
                             speed = speed + speedArray[y];
                         }
                         speed = speed / speedArray.length;
                         dist = UVarray.length * speed; //time * speed average
                         cal = cal + user.activities[x].calories;
                         //We need an extra loop here to add up all UV integers in each activity
-                        for (var y = 0; y < UVarray.length; y++)
-                        {//All data points in an activity
+                        for (var y = 0; y < UVarray.length; y++) {//All data points in an activity
                             uv = uv + UVarray[y];
                             i++;
                         }
@@ -418,6 +411,10 @@ $summarybtn.hover(function () {
 
 
 $addbtn.click(function () {
+    if (changepass) {
+        $("#PassChangeScreen").fadeOut("fast");
+        updateopen = false;
+    }
     if (updateopen) {
         $("#updatescreen").fadeOut("fast");
         updateopen = false;
@@ -459,6 +456,10 @@ $addbtn.click(function () {
 
 
 $regbtn.click(function () {
+    if (changepass) {
+        $("#PassChangeScreen").fadeOut("fast");
+        updateopen = false;
+    }
     if (updateopen) {
         $("#updatescreen").fadeOut("fast");
         updateopen = false;
@@ -512,6 +513,10 @@ $regbtn.click(function () {
 });
 
 $loginbtn.click(function () {
+    if (changepass) {
+        $("#PassChangeScreen").fadeOut("fast");
+        updateopen = false;
+    }
     if (updateopen) {
         $("#updatescreen").fadeOut("fast");
         updateopen = false;
@@ -566,6 +571,10 @@ $loginbtn.click(function () {
 });
 
 $homebtn.click(function () {
+    if (changepass) {
+        $("#PassChangeScreen").fadeOut("fast");
+        updateopen = false;
+    }
     if (updateopen) {
         $("#updatescreen").fadeOut("fast");
         updateopen = false;
@@ -625,6 +634,10 @@ $logoutbtn.click(function () {
 
 $summarybtn.click(function () {
     summarize();
+    if (changepass) {
+        $("#PassChangeScreen").fadeOut("fast");
+        updateopen = false;
+    }
     if (updateopen) {
         $("#updatescreen").fadeOut("fast");
         updateopen = false;
