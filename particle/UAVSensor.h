@@ -9,6 +9,7 @@
 int startstopbtn = A0;
 int PowerOnBtn = D5;
 int PowerLED = D6;
+int UploadLED = D2;
 int x = 0;
 int eventID = 0;
 int UVThreshHold = 0;
@@ -31,6 +32,7 @@ void setup() {
 	pinMode(startstopbtn, INPUT_PULLUP);
 	pinMode(PowerOnBtn, INPUT_PULLUP);
 	pinMode(PowerLED, OUTPUT);
+	pinMode(UploadLED, OUTPUT);
 	SensorData.init();
 	SM.initStatusLed();
 	Serial.begin(9600);
@@ -133,6 +135,7 @@ void loop() {
 
 bool uploadData()
 {
+	digitalWrite(UploadLED, HIGH);
 	Serial.println("");
 	Serial.print("Packets.size() = ");
 	Serial.print(Packets.size());
@@ -160,6 +163,7 @@ bool uploadData()
 		timeOut++;
 		delay(100);
 	}
+	digitalWrite(UploadLED, LOW);
 	return true;
 }
 

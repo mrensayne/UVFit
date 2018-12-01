@@ -125,11 +125,15 @@ void Data::init()
 	uv.begin(VEML6070_1_T);
 	eventID = CustAbs(HAL_RNG_GetRandomNumber());
 	eventTime = Time.format(TIME_FORMAT_ISO8601_FULL);
+	EEPROM.get(0, eventID);
 }
 
 void Data::clear()
 {
-	eventID = CustAbs(HAL_RNG_GetRandomNumber());
+	//Old Event ID Code
+	//eventID = CustAbs(HAL_RNG_GetRandomNumber());
+	eventID++;
+	EEPROM.put(0, eventID);
 	events.clear();
 }
 
