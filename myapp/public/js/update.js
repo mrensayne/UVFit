@@ -17,7 +17,7 @@ $updatebtn.click(function () {
     if (localStorage.getItem("auth")) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-18-206-119-178.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -57,7 +57,7 @@ $update.click(function () {
     };
     $.ajax({
         type: "POST",
-        url: "http://ec2-18-206-119-178.compute-1.amazonaws.com:3000/home.html/user/update",
+        url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/update",
         headers: { 'x-auth': auth, 'newuser': JSON.stringify(user) },
         response: "json"
     }).done(function (data) {
@@ -75,7 +75,7 @@ $uvThreshBtn.click(function () {
     if (localStorage.getItem("auth")) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-18-206-119-178.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -114,7 +114,7 @@ $("#UvThreshSubmit").click(function () {
     };
     $.ajax({
         type: "POST",
-        url: "http://ec2-18-206-119-178.compute-1.amazonaws.com:3000/home.html/user/update",
+        url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/update",
         headers: { 'x-auth': auth, 'newuser': JSON.stringify(user) },
         response: "json"
     }).done(function (data) {
@@ -135,7 +135,7 @@ $remdevbtn.click(function () {
     var deviceRemove = $('#deviceselect').find(":selected").text();
     $.ajax({
         type: "DELETE",
-        url: "http://ec2-18-206-119-178.compute-1.amazonaws.com:3000/home.html/user/removeDev",
+        url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/removeDev",
         headers: { 'x-auth': auth, 'zzrot': deviceRemove },
         response: "json"
     }).done(function (data) {
@@ -146,7 +146,7 @@ $remdevbtn.click(function () {
     });
 });
 
-$changePassBtn.click(function() {
+$changePassBtn.click(function () {
     $homebtn.trigger("click");
     $("#PassChangeScreen").fadeIn("fast");
     changepass = true;
@@ -155,11 +155,11 @@ $changePassBtn.click(function() {
 $newPassSubmit.click(function () {
     var user = JSON.parse(localStorage.getItem("currentUser"));
     if (!user)
-        return;       
+        return;
     var request = { email: user.email, password: $("#currPass").val(), pass: $("#newPass").val() };
     $.ajax({
         type: "POST",
-        url: "http://ec2-18-206-119-178.compute-1.amazonaws.com:3000/home.html/user/passChange",
+        url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/passChange",
         headers: request,
         contentType: "application/json",
         response: "application/json"
@@ -171,8 +171,8 @@ $newPassSubmit.click(function () {
             setTimeout(function () { $homebtn.trigger("click"); }, 2000);
         }
     }).fail(function (data) {
-            $("#passh1").text(data.responseJSON);
-            $("#passh1").css("color", "red");
-        
+        $("#passh1").text(data.responseJSON);
+        $("#passh1").css("color", "red");
+
     });
 });
