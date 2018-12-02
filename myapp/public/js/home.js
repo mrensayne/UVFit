@@ -30,6 +30,19 @@ $summary = $("#summary");
 $sumtimeval = $("#sumtimeval");
 $sumcalval = $("#sumcalval");
 $sumuvval = $("#sumuvval");
+$summarylocalbtn = $("#summarylocalbtn");
+$summarylocal = $("#summarylocal");
+$numactsval = $("#numactsval");
+$avgdistval = $("#avgdistval");
+$avgcalval = $("#avgcalval");
+$avguvval = $("#avguvval");
+$summaryglobalbtn = $("#summaryglobalbtn");
+$summaryglobal = $("#summaryglobal");
+$numactsvalg = $("#numactsvalg");
+$avgdistvalg = $("#avgdistvalg");
+$avgcalvalg = $("#avgcalvalg");
+$avguvvalg = $("#avguvvalg");
+
 
 
 function getUVForecast() {
@@ -156,8 +169,11 @@ function summarizeLocal() {
                 distAvg = distAvg / actNum;
                 calAvg = calAvg / actNum;
             }
-
             //update html with that data
+            $avguvval.html(UVavg);
+            $avgdistval.html(distAvg);
+            $avgcalval.html(calAvg);
+            $numactsval.html(actNum);
         }).fail(function (data) {
             localStorage.clear();
         });
@@ -220,8 +236,11 @@ function summarizeGlobal() {
                 distAvg = distAvg / actNum;
                 calAvg = calAvg / actNum;
             }
-
             //update html with that data
+            $avguvvalg.html(UVavg);
+            $avgdistvalg.html(distAvg);
+            $avgcalvalg.html(calAvg);
+            $numactsvalg.html(actNum);
         }).fail(function (data) {
             localStorage.clear();
         });
