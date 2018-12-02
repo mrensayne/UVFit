@@ -8,6 +8,8 @@ var deviceopen = false;
 var UVMenuOpen = false;
 var updateopen = false;
 var summaryopen = false;
+var sumlocalopen = false;
+var sumglobalopen = false;
 var changepass = false;
 var lat = 0.0;
 var lon = 0.0;
@@ -703,6 +705,135 @@ $summarybtn.click(function () {
         $summary.fadeIn("slow");
     }
     summaryopen = true;
+    homeopen = false;
+    registeropen = false;
+    loginopen = false;
+    deviceopen = false;
+});
+
+$summarylocalbtn.click(function () {
+    summarizeLocal();
+    if (changepass) {
+        $("#PassChangeScreen").fadeOut("fast");
+        updateopen = false;
+    }
+    if (updateopen) {
+        $("#updatescreen").fadeOut("fast");
+        updateopen = false;
+    }
+    if (UVMenuOpen) {
+        $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
+        UVMenuOpen = false;
+    }
+    if (summaryopen){
+        $summary.fadeOut("fast").css("height", "260px");
+        summary = false;
+    }
+    if (summglobalopen){
+        $summaryglobal.fadeOut("fast").css("height", "260px");
+        summglobalopen = false;
+    }
+    $homediv.fadeOut("fast");
+    if (registeropen) {
+        safetochange = false;
+        $regdiv.animate({
+            opacity: 0,
+            marginTop: "+=1000"
+        }, 1000, function () {
+            $summary.fadeIn("slow");
+            safetochange = true;
+        });
+    }
+    else if (loginopen) {
+        safetochange = false;
+        $logdiv.animate({
+            opacity: 0,
+            marginTop: "+=1000"
+        }, 1000, function () {
+            $summary.fadeIn("slow");
+            safetochange = true;
+        });
+    }
+    else if (deviceopen) {
+        safetochange = false;
+
+        $devicediv.animate({
+            opacity: 0,
+            marginTop: "+=1000"
+        }, 1000, function () {
+            $summary.fadeIn("slow");
+            safetochange = true;
+        });
+    }
+    else {
+        $summarylocal.fadeIn("slow");
+    }
+    summlocalopen = true;
+    homeopen = false;
+    registeropen = false;
+    loginopen = false;
+    deviceopen = false;
+});
+
+$summaryglobalbtn.click(function () {
+    summarizeGlobal();
+    if (changepass) {
+        $("#PassChangeScreen").fadeOut("fast");
+        updateopen = false;
+    }
+    if (updateopen) {
+        $("#updatescreen").fadeOut("fast");
+        updateopen = false;
+    }
+    if (UVMenuOpen) {
+        $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
+        UVMenuOpen = false;
+    }
+    if (summaryopen){
+        $summary.fadeOut("fast").css("height", "260px");
+        summary = false;
+    }
+    if (summlocalopen){
+        $summarylocal.fadeOut("fast").css("height", "260px");
+        summlocalopen = false;
+    }
+    $homediv.fadeOut("fast");
+    if (registeropen) {
+        safetochange = false;
+        $regdiv.animate({
+            opacity: 0,
+            marginTop: "+=1000"
+        }, 1000, function () {
+            $summary.fadeIn("slow");
+            safetochange = true;
+        });
+    }
+    else if (loginopen) {
+        safetochange = false;
+        $logdiv.animate({
+            opacity: 0,
+            marginTop: "+=1000"
+        }, 1000, function () {
+            $summary.fadeIn("slow");
+            safetochange = true;
+        });
+    }
+    else if (deviceopen) {
+        safetochange = false;
+
+        $devicediv.animate({
+            opacity: 0,
+            marginTop: "+=1000"
+        }, 1000, function () {
+            $summary.fadeIn("slow");
+            safetochange = true;
+        });
+    }
+    else {
+        $summaryglobal.fadeIn("slow");
+    }
+    summaryglobalopen = true;
+    summarylocalopen = false;
     homeopen = false;
     registeropen = false;
     loginopen = false;
