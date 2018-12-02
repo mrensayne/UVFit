@@ -115,6 +115,38 @@ a {
     margin: auto;
 }
 
+#summarylocal {
+    display: none;
+    background-color: rgba(28,31,33,.75);
+    text-align: center;
+    color: ghostwhite;
+    font-family: 'Microsoft JhengHei UI';
+    height: 400px;
+    width: 500px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+#summaryglobal {
+    display: none;
+    background-color: rgba(28,31,33,.75);
+    text-align: center;
+    color: ghostwhite;
+    font-family: 'Microsoft JhengHei UI';
+    height: 400px;
+    width: 500px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
 #ActTypeSelect {
     display: block;
     width: 400px;
