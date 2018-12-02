@@ -161,13 +161,13 @@ $newPassSubmit.click(function () {
     var pass = $("#newPass").val();
     if (pass.length < 10 || pass.length > 20) {
         errorString += "<li>Password must be between 10 and 20 characters.</li>";
-        //pass.style.border = "2px red solid";
+        $("#newPass").css("border", "2px red solid");
         good = false;
     }
     var lower = new RegExp(/[a-z]/)
     if (!(lower.test(pass))) {
         errorString += "<li>Password must contain at least one lowercase character.</li>";
-        //pass.style.border = "2px red solid";
+        $("#newPass").css("border", "2px red solid");
         good = false;
     }
     else
@@ -175,18 +175,18 @@ $newPassSubmit.click(function () {
     var upper = new RegExp(/[A-Z]/)
     if (!(upper.test(pass.value))) {
         errorString += "<li>Password must contain at least one uppercase character.</li>";
-        //pass.style.border = "2px red solid";
+        $("#newPass").css("border", "2px red solid");
         good = false;
     }
     var dig = new RegExp(/\d/)
     if (!(dig.test(pass))) {
         errorString += "<li>Password must contain at least one digit.</li>";
-        //pass.style.border = "2px red solid";
+        $("#newPass").css("border", "2px red solid");
         good = false;
     }
     if (pass !== $("#currPassVerif").val()) {
         errorString += "<li>Password and confirmation password don't match.</li>";
-        //con.style.border = "2px red solid";
+        $("#currPassVerif").css("border", "2px red solid");
         good = false;
     }
     errorString += "</ul>";
