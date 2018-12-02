@@ -154,25 +154,66 @@ $changePassBtn.click(function () {
 
 $newPassSubmit.click(function () {
     var user = JSON.parse(localStorage.getItem("currentUser"));
-    if (!user)
-        return;
-    var request = { email: user.email, password: $("#currPass").val(), pass: $("#newPass").val() };
-    $.ajax({
-        type: "POST",
-        url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/passChange",
-        headers: request,
-        contentType: "application/json",
-        response: "application/json"
-    }).done(function (data) {
-        if (data) {
-            localStorage.setItem("currentUser", JSON.stringify(data.person));
-            localStorage.setItem("auth", data.auth);
-            $("#passh1").text("Successfully Updated Password").css("color", "green");
-            setTimeout(function () { $homebtn.trigger("click"); }, 2000);
-        }
-    }).fail(function (data) {
-        $("#passh1").text(data.responseJSON);
-        $("#passh1").css("color", "red");
 
-    });
+    //adding pass check code here
+    var good = true;
+    var errorString = "<ul>";
+    var pass = $("#newPass").val();
+    if (pass.length < 10 || pass.length > 20) {
+        errorString += "<li>Password must be between 10 and 20 characters.</li>";
+        //pass.style.border = "2px red solid";
+        good = false;
+    }
+    var lower = new RegExp(/[a-z]/)
+    if (!(lower.test(pass))) {
+        errorString += "<li>Password must contain at least one lowercase character.</li>";
+        //pass.style.border = "2px red solid";
+        good = false;
+    }
+    else
+        pass.style.border = "1px #aaa solid";
+    var upper = new RegExp(/[A-Z]/)
+    if (!(upper.test(pass.value))) {
+        errorString += "<li>Password must contain at least one uppercase character.</li>";
+        //pass.style.border = "2px red solid";
+        good = false;
+    }
+    var dig = new RegExp(/\d/)
+    if (!(dig.test(pass))) {
+        errorString += "<li>Password must contain at least one digit.</li>";
+        //pass.style.border = "2px red solid";
+        good = false;
+    }
+    if (pass !== $("#currPassVerif").val()) {
+        errorString += "<li>Password and confirmation password don't match.</li>";
+        //con.style.border = "2px red solid";
+        good = false;
+    }
+    errorString += "</ul>";
+
+    if (good) {
+        if (!user)
+            return;
+        var request = { email: user.email, password: $("#currPass").val(), pass: $("#newPass").val() };
+        $.ajax({
+            type: "POST",
+            url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/passChange",
+            headers: request,
+            contentType: "application/json",
+            response: "application/json"
+        }).done(function (data) {
+            if (data) {
+                localStorage.setItem("currentUser", JSON.stringify(data.person));
+                localStorage.setItem("auth", data.auth);
+                $("#passh1").text("Successfully Updated Password").css("color", "green");
+                setTimeout(function () { $homebtn.trigger("click"); }, 2000);
+            }
+        }).fail(function (data) {
+            $("#passh1").text(data.responseJSON);
+            $("#passh1").css("color", "red");
+        });
+    } else {
+        $("#passh1").html(errorString);
+        $("#passh1").css("color", "red");
+    }
 });
