@@ -126,7 +126,7 @@ function summarizeLocal() {
                 localStorage.setItem('currentUser', JSON.stringify(data));
                 for (var z = 0; z < data.length; z++) { //change this based on how we update the API
                     var user = data;
-                    if (Math.ceil(JSON.parse(user.activities[0].longitude)[0]) == Math.ceil(lon)) { //"local" check
+                    if ((Math.ceil(JSON.parse(user.activities[0].longitude)[0]) == Math.ceil(lat)) && (Math.ceil(JSON.parse(user.activities[0].latitude)[0]) == Math.ceil(lat))) { //"local" check
                         for (var x = 0; x < user.activities.length; x++) {
                             actNum++;
                             var UVarray = JSON.parse(user.activities[x].UV);
