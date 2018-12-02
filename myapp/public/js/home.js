@@ -24,7 +24,6 @@ $addbtn = $("#AddDevicebtn");
 $devicediv = $("#deviceaddscreen");
 $devicesub = $("#devicesumbitadd");
 $updatebtn = $("#updatebtn");
-$uvforecast = $("#uvforecast");
 $uvThreshBtn = $("#uvthreshbtn");
 $summarybtn = $("#summarybtn");
 $summary = $("#summary");
@@ -34,6 +33,7 @@ $sumuvval = $("#sumuvval");
 
 
 function getUVForecast() {
+    $uvforecast = $("#uvforecast");
     if (lat == 0.0 || lon == 0.0) { //default if we haven't gotten lat/lon values yet
         lat = 30.75;
         lon = 40.25;
@@ -289,6 +289,8 @@ function initSiteForUser() {
         $homediv.append(deviceDisplay);
         deviceDisplay = "";
     }
+    $homediv.append("<h2>UV Forceast</h2> <div id=\"uvforecast\"></div>");
+    getUVForecast();
 }
 
 $(document).ready()
