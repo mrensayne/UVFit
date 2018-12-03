@@ -725,11 +725,11 @@ $summarylocalbtn.click(function () {
         $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
         UVMenuOpen = false;
     }
-    if (summaryopen){
+    if (summaryopen) {
         $summary.fadeOut("fast").css("height", "260px");
         summary = false;
     }
-    if (summglobalopen){
+    if (sumglobalopen) {
         $summaryglobal.fadeOut("fast").css("height", "260px");
         summglobalopen = false;
     }
@@ -789,11 +789,11 @@ $summaryglobalbtn.click(function () {
         $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
         UVMenuOpen = false;
     }
-    if (summaryopen){
+    if (summaryopen) {
         $summary.fadeOut("fast").css("height", "260px");
         summary = false;
     }
-    if (summlocalopen){
+    if (summlocalopen) {
         $summarylocal.fadeOut("fast").css("height", "260px");
         summlocalopen = false;
     }
