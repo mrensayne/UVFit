@@ -1,4 +1,7 @@
 // This #include statement was automatically added by the Particle IDE.
+#include <AssetTracker.h>
+
+// This #include statement was automatically added by the Particle IDE.
 #include "StateMachine.h"
 
 // This #include statement was automatically added by the Particle IDE.
@@ -23,19 +26,25 @@ int TwentyFourHours{ 0 };
 int pingcounter{ 0 };
 int pollcounter{ 0 };
 
+AssetTracker locationTracker = AssetTracker();
+
 Input input;
-Data SensorData;
+Data SensorData(locationTracker);
 StateMachine SM;
 std::vector<String> Packets;
 
+
+
 void setup() {
+	Serial.begin(9600);
 	pinMode(startstopbtn, INPUT_PULLUP);
 	pinMode(PowerOnBtn, INPUT_PULLUP);
 	pinMode(PowerLED, OUTPUT);
 	pinMode(UploadLED, OUTPUT);
 	SensorData.init();
 	SM.initStatusLed();
-	Serial.begin(9600);
+	locationTracker.begin();
+	locationTracker.gpsOn();
 	Particle.subscribe("hook-response/DataRead", myHandler, MY_DEVICES);
 	Particle.subscribe("hook-response/DevSettings", settingsHandler, MY_DEVICES);
 }
@@ -51,6 +60,7 @@ void loop() {
 	}
 	else
 	{//Power button is truly pressed
+		locationTracker.updateGPS();
 		digitalWrite(PowerLED, HIGH);
 		while (true)
 		{//Lets loop inside the powered on state
@@ -157,6 +167,7 @@ bool uploadData()
 			Serial.println("");
 			Serial.println("Timed Out");
 			pollUploading = true;
+			digitalWrite(UploadLED, LOW);
 			return false;
 		}
 		Serial.print("/");

@@ -21,14 +21,14 @@ private:
 		Event(float, float, float, int);
 	};
 	Adafruit_VEML6070 uv;
-	AssetTracker locationTracker;
+	AssetTracker& locationTracker;
 	std::vector<Event> events;
 	int eventID{ 0 };
 	String eventTime{ "" };
 	//Determines the type of activity(Running, Jogging, Walking)
 	String actType{ "Auto" };
 public:
-	Data();
+	Data(AssetTracker&);
 	void getSensorData();
 	//Returns true if the threshhold is over
 	bool checkUVThresh(int thresh);

@@ -1,6 +1,6 @@
 #include "Data.h"
 
-Data::Data()
+Data::Data(AssetTracker& tracker) : locationTracker(tracker)
 {
 
 }
@@ -113,15 +113,12 @@ int CustAbs(int x)
 
 void Data::getSensorData()
 {
-	events.push_back(Event(locationTracker.readLon(), locationTracker.readLat(), locationTracker.getSpeed(), uv.readUV()));
+	events.push_back(Event(locationTracker.readLonDeg(), locationTracker.readLatDeg(), locationTracker.getSpeed(), uv.readUV()));
 }
 
 void Data::init()
 {
 	uv = Adafruit_VEML6070();
-	locationTracker = AssetTracker();
-	locationTracker.begin();
-	locationTracker.gpsOn();
 	uv.begin(VEML6070_1_T);
 	eventID = CustAbs(HAL_RNG_GetRandomNumber());
 	eventTime = Time.format(TIME_FORMAT_ISO8601_FULL);
