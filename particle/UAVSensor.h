@@ -60,11 +60,11 @@ void loop() {
 	}
 	else
 	{//Power button is truly pressed
-		locationTracker.updateGPS();
 		digitalWrite(PowerLED, HIGH);
 		while (true)
 		{//Lets loop inside the powered on state
 		 //Serial.print("."); // Doing this to see if it crashes or wtf is going on
+			locationTracker.updateGPS();
 			input = getInput();
 			if (input == Input::TRUEPOWER)
 			{//Power button pressed when device on so power off
