@@ -21,7 +21,8 @@ var User = db.model("user", {
         UV: [String],
         speed: [String],
         calories: Number
-    }]
+    }],
+    isVerified: { type: Boolean, default: false }
 });
 
 module.exports = User;

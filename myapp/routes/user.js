@@ -1,9 +1,12 @@
 var express = require('express');
 var User = require('../models/user');
+var Token = require('../models/token');
 var router = express.Router();
 var bcrypt = require("bcrypt-nodejs");
 var jwt = require("jwt-simple");
 var fs = require('fs');
+var crypto = require('crypto');
+var nodemailer = require('nodemailer');
 
 var secret = fs.readFileSync(__dirname + '/../../../secretkey.txt').toString();
 
@@ -31,7 +34,22 @@ router.post("/register", function (req, res) {
                         actType: req.body.actType
                     });
                     user.save(function (err, user) {
-                        return res.status(201).send();
+                        if(err) { return res.status(500).json(err); }
+			var token = new Token({_userId: user._id, token: crypto.randomBytes(16).toString('hex') });
+			token.save(function (err) {
+				if (err) { return res.status(500).json(err); }
+				var transporter = nodemailer.createTransport( {service: 'Gmail', auth: {user: 'ece513final@gmail.com', pass: 'eceproject321!' }});
+				console.log(req.body.email);
+				var mailOptions = {
+					from: 'no-reply@uvfit.com',
+					to: req.body.email,
+					subject: 'Account Verification Link',
+					text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/home.html\/user\/confirmation?token=' + token.token + '.\n'};
+				transporter.sendMail(mailOptions, function(err) {
+					if (err) {return res.status(500).json(err); }
+					res.status(201).send();
+				});
+			});
                     });
                 }
             });
@@ -47,7 +65,9 @@ router.get("/login", function (req, res) {
             res.status(400).send(err);
         } else if (!user) {
             res.status(401).json({ success: false, error: "The email or password provided was invalid." });
-        } else {
+        } else if (!user.isVerified) {
+	    res.status(401).json({ success: false, error: "Your account has not been verified." });
+	} else {
             bcrypt.compare(req.query.password, user.pass, function (err, valid) {
                 if (err) {
                     res.status(401).json({ person: {}, success: false, error: "Error authenticating. Please contact support." });
@@ -304,5 +324,36 @@ router.post("/passChange", function (req, res) {
     });
 });
 
+router.get('/confirmation', function(req, res) {
+    console.log("got to confirmation");
+    Token.findOne({ token: req.query.token }, function(err, token) {
+	if (!token) {
+	    console.log("token not found");
+	    return res.status(400).json({ success: false, error: "Invalid Token. Your token may have expired."});
+	}
+	User.findOne({ _id:token._userId }, function(err, user) {
+	    if (!user) {
+		console.log("user not found");
+		return res.status(400).json({ success: false, error: "User not found for this token."});
+	    }
+	    if (user.isVerified) {
+		return res.status(400).json({ success: false, error: "User has already been verified."});
+	    }
+
+	    user.isVerified = true;
+	    user.save(function(err) {
+		if (err) {
+		    return res.status(500).json({success: false, error: "Internal MongoDB error."});
+		}
+		//res.status(200).send({success: true, error: "The account has been verified. Please log in."});
+		return res.redirect("/home.html");
+	    });
+	});
+    });
+});
+
+router.post("/resend", function(req, res) {
+
+});
 
 module.exports = router;
