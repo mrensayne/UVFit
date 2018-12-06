@@ -79,7 +79,7 @@ function summarize() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -133,7 +133,7 @@ function summarizeLocal() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -202,7 +202,7 @@ function summarizeGlobal() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -256,7 +256,7 @@ function getAndDisplayDeviceData() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -319,7 +319,7 @@ $(document).ready()
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -350,7 +350,7 @@ function regDevice() {
 
     $.ajax({
         type: "POST",
-        url: "http://ec2-34-205-125-158.compute-1.amazonaws.com:3000/home.html/user/device",
+        url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/device",
         headers: { 'x-auth': localStorage.getItem("auth"), 'dev': $("#deviceinput").val() },
         response: "json"
     }).done(function (data) {
