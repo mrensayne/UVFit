@@ -7,14 +7,6 @@ StateMachine::StateMachine()
 
 bool StateMachine::Tick(Input input, Data& data)
 {
-	//if (input == Input::INTERNET)
-	//{
-	//	if (test)
-	//		test = false;
-	//	else
-	//		test = true;
-	//	return false;
-	//}
 	if (input == Input::POWER && state != State::OFF)
 	{// Power button was pressed so send to server and power off
 		state = State::SEND;
@@ -58,9 +50,9 @@ bool StateMachine::Tick(Input input, Data& data)
 	}
 	case State::PAUSE:
 	{// When speed is 0 for over 2 seconds
-		if (data.checkSpeed() <= -1)
-		{ // set from -1 to 0 for actual functionality
-			Serial.println("In Pause");
+		if (data.checkSpeed() <= 0)
+		{ // Set this if statement to (data.checkSpeed() <= -1) for testing and (data.checkSpeed() <= 0) for actual release
+			Serial.print("p");
 		}
 		else
 		{
@@ -229,4 +221,17 @@ void StateMachine::setUVThreshHold(int thresh)
 	if (thresh <= 0)
 		return;
 	this->UVThreshHold = thresh;
+}
+
+void StateMachine::reset() {
+	state = State::OFF;
+	statusLed = 0;
+	 UVWarningLED = 0;
+	 UVWarningTimer = 0;
+	 autoPauseCounter = 0;
+	 LedClock = 0;
+	 PrintClock = 0;
+	 RecordClock = 0;
+	 PublishClock = 0;
+	 initStatusLed();
 }

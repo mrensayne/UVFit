@@ -56,6 +56,8 @@ void loop() {
 	{
 		Packets.clear();
 		initUvThresh = true;
+		SM.reset();
+		SensorData.clear();
 		digitalWrite(PowerLED, LOW);
 	}
 	else
@@ -106,7 +108,6 @@ void loop() {
 			}
 			if (pollUploading && SM.getState() != State::SEND)
 			{
-				Serial.println("Polling Uploads is HIGH");
 				if (Packets.size() == 0)
 				{//Making sure that we aren't polling when nothing is left to upload still due to late arrival of server response
 					Serial.println("Stopping polling because Buffer(Packets.size()) is empty");

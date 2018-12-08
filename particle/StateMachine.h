@@ -24,6 +24,7 @@ public:
 	int UVThreshHold{ 65536 };
 	StateMachine();
 	State getState() { return state; }
+	void reset();
 	void initStatusLed();
 	void setUVThreshHold(int thresh);
 	bool Tick(Input input, Data& data); // bool is the publish flag
