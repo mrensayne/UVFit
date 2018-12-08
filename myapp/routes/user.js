@@ -44,7 +44,7 @@ router.post("/register", function (req, res) {
 					from: 'no-reply@uvfit.com',
 					to: req.body.email,
 					subject: 'Account Verification Link',
-					text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/home.html\/user\/confirmation?token=' + token.token + '.\n'};
+					text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttps:\/\/' + req.headers.host + '\/home.html\/user\/confirmation?token=' + token.token + '.\n'};
 				transporter.sendMail(mailOptions, function(err) {
 					if (err) {return res.status(500).json(err); }
 					res.status(201).send();
