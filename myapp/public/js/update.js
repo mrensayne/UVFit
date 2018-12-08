@@ -53,7 +53,6 @@ $update.click(function () {
     var user = {
         name: $fullnameupdate.val(),
         email: $emailupdate.val(),
-        uvThresh: $uvthreshholdupdate.val()
     };
     $.ajax({
         type: "POST",
@@ -61,8 +60,10 @@ $update.click(function () {
         headers: { 'x-auth': auth, 'newuser': JSON.stringify(user) },
         response: "json"
     }).done(function (data) {
+        data.name = $fullnameupdate.val();
+        data.email = $emailupdate.val();
         localStorage.setItem('currentUser', JSON.stringify(data));
-
+        initSiteForUser();
     }).fail(function (data) {
         console.log(data);
     });
@@ -171,9 +172,9 @@ $newPassSubmit.click(function () {
         good = false;
     }
     else
-        pass.style.border = "1px #aaa solid";
+        $("#newPass").css("border", "1px #aaa solid");
     var upper = new RegExp(/[A-Z]/)
-    if (!(upper.test(pass.value))) {
+    if (!(upper.test(pass))) {
         errorString += "<li>Password must contain at least one uppercase character.</li>";
         $("#newPass").css("border", "2px red solid");
         good = false;

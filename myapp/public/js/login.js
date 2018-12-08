@@ -50,8 +50,6 @@ function loginuser() {
 
 }
 
-
-
 $loginuserbtn.click(function () {
     var useremailerror = false;
     var userpassworderror = false;
