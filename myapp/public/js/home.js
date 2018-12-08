@@ -434,6 +434,12 @@ $summarybtn.hover(function () {
 
 
 $addbtn.click(function () {
+    sumglobalopen = false;
+    $summaryglobal.fadeOut("slow");
+    sumlocalopen = false;
+    $summarylocal.fadeOut("slow");
+    summaryopen = false;
+    $summary.fadeOut("slow");
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
         updateopen = false;
@@ -445,10 +451,6 @@ $addbtn.click(function () {
     if (UVMenuOpen) {
         $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
         UVMenuOpen = false;
-    }
-    if (summaryopen) {
-        $summary.fadeOut("fast");
-        summaryopen = false;
     }
     if (!deviceopen) {
         $devicediv.css("height", "200px");
@@ -479,23 +481,12 @@ $addbtn.click(function () {
 
 
 $regbtn.click(function () {
-    if (changepass) {
-        $("#PassChangeScreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (updateopen) {
-        $("#updatescreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (UVMenuOpen) {
-        $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
-        UVMenuOpen = false;
-    }
-    if (summaryopen) {
-        $summary.fadeOut("fast");
-        summaryopen = false;
-    }
-    $homediv.fadeOut("fast");
+    sumglobalopen = false;
+    $summaryglobal.fadeOut("slow");
+    sumlocalopen = false;
+    $summarylocal.fadeOut("slow");
+    summaryopen = false;
+    $summary.fadeOut("slow");
     if (loginopen && safetochange) {
         safetochange = false;
         $regdiv.css("margin-top", "0");
@@ -533,9 +524,24 @@ $regbtn.click(function () {
         UVMenuOpen = false;
         homeopen = false;
     }
+    else {
+        $homebtn.trigger('click');
+        $regdiv.animate({
+            opacity: 1,
+            marginTop: "-=2000"
+        }, 1000, function () {
+            safetochange = true;
+        });
+    }
 });
 
 $loginbtn.click(function () {
+    sumglobalopen = false;
+    $summaryglobal.fadeOut("slow");
+    sumlocalopen = false;
+    $summarylocal.fadeOut("slow");
+    summaryopen = false;
+    $summary.fadeOut("slow");
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
         updateopen = false;
@@ -547,10 +553,6 @@ $loginbtn.click(function () {
     if (UVMenuOpen) {
         $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
         UVMenuOpen = false;
-    }
-    if (summaryopen) {
-        $summary.fadeOut("fast");
-        summaryopen = false;
     }
     $("#loginerror").html("");
     $("#loginpassword").val("");
@@ -635,13 +637,13 @@ $homebtn.click(function () {
             safetochange = true;
         });
     }
-    else if (summaryopen) {
+    if (summaryopen) {
         $summary.fadeOut("fast");
     }
-    else if (sumlocalopen) {
+    if (sumlocalopen) {
         $summarylocal.fadeOut("fast");
     }
-    else if (sumglobalopen) {
+    if (sumglobalopen) {
         $summaryglobal.fadeOut("fast");
     }
 
