@@ -188,11 +188,11 @@ a {
     font-family: 'Microsoft JhengHei UI';
 }
 
-    #userInfoDiv ul {
-        position: absolute;
-        right: 10px;
-        padding: 5px;
-    }
+#userInfoDiv ul {
+    position: absolute;
+    right: 10px;
+    padding: 5px;
+}
 
 #logtoggleout, #updateli, #uvthreshli {
     display: none;
@@ -261,7 +261,27 @@ div {
     text-align: center;
 }
 
+@media screen and (min-width: 1920px) {
+    #backgroundimg {
+        background-attachment: fixed;
+        background-position: center;
+        background-image: url("../images/c7cac9bdfcaae2fc41bd20df634416e1.jpg");
+        position: relative;
+        top: 10px;
+        background-size: cover;
+        bottom: 1px;
+        height: 100vh;
+    }
+}
+
 @media screen and (max-width: 800px) {
+    #Logo {
+        padding: 0;
+        display: block;
+        margin: 0 auto;
+        max-height: 25%;
+        max-width: 75%;
+    }
     #homescreen {
         text-align: center;
         color: ghostwhite;
@@ -309,11 +329,11 @@ div {
         font-family: 'Microsoft JhengHei UI';
     }
 
-        #userInfoDiv ul {
-            position: absolute;
-            right: 10vw;
-            padding: 5px;
-        }
+    #userInfoDiv ul {
+        position: absolute;
+        right: 10vw;
+        padding: 5px;
+    }
 
     .form {
         margin: auto;
@@ -323,6 +343,14 @@ div {
 }
 
 @media screen and (max-width: 600px) {
+    #Logo {
+        padding: 0;
+        display: block;
+        margin: 0 auto;
+        max-height: 50%;
+        max-width: 100%;
+    }
+
     #homescreen {
         text-align: center;
         color: ghostwhite;
