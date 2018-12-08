@@ -10,6 +10,7 @@ body {
     position: fixed;
     background-size: cover;
     height: 100%;
+    left: 0px;
 }
 
 #Logo {
@@ -343,6 +344,7 @@ div {
 }
 
 @media screen and (max-width: 600px) {
+
     #Logo {
         padding: 0;
         display: block;
@@ -398,15 +400,35 @@ div {
         font-family: 'Microsoft JhengHei UI';
     }
 
-        #userInfoDiv ul {
-            position: absolute;
-            right: 5vw;
-            padding: 5px;
-        }
+    #userInfoDiv ul {
+        position: absolute;
+        right: 5vw;
+        padding: 5px;
+    }
 
     .form {
         margin: auto;
         width: 90%;
         text-align: center;
+    }
+
+    #nav {
+        width:100vw;
+    }
+
+    #nav li {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        margin-left: 5px;
+        margin-right: 5px;
+        display: inline-block;
+        font-family: 'Microsoft JhengHei UI';
+        font-size: 16px;
+        font-weight: bold;
+        color: ghostwhite;
     }
 }
