@@ -596,19 +596,13 @@ $loginbtn.click(function () {
 $homebtn.click(function () {
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
-        updateopen = false;
     }
     if (updateopen) {
         $("#updatescreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (summaryopen) {
-        $summary.fadeOut("fast");
-        summaryopen = false;
     }
     if (UVMenuOpen) {
         $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
-        UVMenuOpen = false;
+
     }
     if (!homeopen && registeropen) {
         safetochange = false;
@@ -641,13 +635,27 @@ $homebtn.click(function () {
             safetochange = true;
         });
     }
-    else {
-        $homediv.fadeIn("slow");
+    else if (summaryopen) {
+        $summary.fadeOut("fast");
     }
+    else if (sumlocalopen) {
+        $summarylocal.fadeOut("fast");
+    }
+    else if (sumglobalopen) {
+        $summaryglobal.fadeOut("fast");
+    }
+
+    $homediv.fadeIn("slow");
+
+    updateopen = false;
     homeopen = true;
     registeropen = false;
     loginopen = false;
     deviceopen = false;
+    UVMenuOpen = false;
+    summaryopen = false;
+    sumglobalopen = false;
+    sumlocalopen = false;
 });
 
 $logoutbtn.click(function () {
@@ -656,186 +664,22 @@ $logoutbtn.click(function () {
 });
 
 $summarybtn.click(function () {
+    $homebtn.trigger('click');
     summarize();
-    if (changepass) {
-        $("#PassChangeScreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (updateopen) {
-        $("#updatescreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (UVMenuOpen) {
-        $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
-        UVMenuOpen = false;
-    }
-    $homediv.fadeOut("fast");
-    if (registeropen) {
-        safetochange = false;
-        $regdiv.animate({
-            opacity: 0,
-            marginTop: "+=1000"
-        }, 1000, function () {
-            $summary.fadeIn("slow");
-            safetochange = true;
-        });
-    }
-    else if (loginopen) {
-        safetochange = false;
-        $logdiv.animate({
-            opacity: 0,
-            marginTop: "+=1000"
-        }, 1000, function () {
-            $summary.fadeIn("slow");
-            safetochange = true;
-        });
-    }
-    else if (deviceopen) {
-        safetochange = false;
-
-        $devicediv.animate({
-            opacity: 0,
-            marginTop: "+=1000"
-        }, 1000, function () {
-            $summary.fadeIn("slow");
-            safetochange = true;
-        });
-    }
-    else {
-        $summary.fadeIn("slow");
-    }
+    $summary.fadeIn("slow");
     summaryopen = true;
-    homeopen = false;
-    registeropen = false;
-    loginopen = false;
-    deviceopen = false;
 });
 
 $summarylocalbtn.click(function () {
     summarizeLocal();
-    if (changepass) {
-        $("#PassChangeScreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (updateopen) {
-        $("#updatescreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (UVMenuOpen) {
-        $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
-        UVMenuOpen = false;
-    }
-    if (summaryopen) {
-        $summary.fadeOut("fast").css("height", "260px");
-        summary = false;
-    }
-    if (sumglobalopen) {
-        $summaryglobal.fadeOut("fast").css("height", "260px");
-        summglobalopen = false;
-    }
-    $homediv.fadeOut("fast");
-    if (registeropen) {
-        safetochange = false;
-        $regdiv.animate({
-            opacity: 0,
-            marginTop: "+=1000"
-        }, 1000, function () {
-            $summary.fadeIn("slow");
-            safetochange = true;
-        });
-    }
-    else if (loginopen) {
-        safetochange = false;
-        $logdiv.animate({
-            opacity: 0,
-            marginTop: "+=1000"
-        }, 1000, function () {
-            $summary.fadeIn("slow");
-            safetochange = true;
-        });
-    }
-    else if (deviceopen) {
-        safetochange = false;
-
-        $devicediv.animate({
-            opacity: 0,
-            marginTop: "+=1000"
-        }, 1000, function () {
-            $summary.fadeIn("slow");
-            safetochange = true;
-        });
-    }
-    else {
-        $summarylocal.fadeIn("slow");
-    }
-    summlocalopen = true;
-    homeopen = false;
-    registeropen = false;
-    loginopen = false;
-    deviceopen = false;
+    $homebtn.trigger('click');
+    $summarylocal.fadeIn("slow");
+    sumlocalopen = true;
 });
 
 $summaryglobalbtn.click(function () {
     summarizeGlobal();
-    if (changepass) {
-        $("#PassChangeScreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (updateopen) {
-        $("#updatescreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (UVMenuOpen) {
-        $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
-        UVMenuOpen = false;
-    }
-    if (summaryopen) {
-        $summary.fadeOut("fast").css("height", "260px");
-        summary = false;
-    }
-    if (summlocalopen) {
-        $summarylocal.fadeOut("fast").css("height", "260px");
-        summlocalopen = false;
-    }
-    $homediv.fadeOut("fast");
-    if (registeropen) {
-        safetochange = false;
-        $regdiv.animate({
-            opacity: 0,
-            marginTop: "+=1000"
-        }, 1000, function () {
-            $summary.fadeIn("slow");
-            safetochange = true;
-        });
-    }
-    else if (loginopen) {
-        safetochange = false;
-        $logdiv.animate({
-            opacity: 0,
-            marginTop: "+=1000"
-        }, 1000, function () {
-            $summary.fadeIn("slow");
-            safetochange = true;
-        });
-    }
-    else if (deviceopen) {
-        safetochange = false;
-
-        $devicediv.animate({
-            opacity: 0,
-            marginTop: "+=1000"
-        }, 1000, function () {
-            $summary.fadeIn("slow");
-            safetochange = true;
-        });
-    }
-    else {
-        $summaryglobal.fadeIn("slow");
-    }
-    summaryglobalopen = true;
-    summarylocalopen = false;
-    homeopen = false;
-    registeropen = false;
-    loginopen = false;
-    deviceopen = false;
+    $homebtn.trigger('click');
+    $summaryglobal.fadeIn("slow");
+    sumglobalopen = true;
 });
