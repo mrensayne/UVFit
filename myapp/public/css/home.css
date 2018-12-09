@@ -435,10 +435,14 @@ div {
 .actcontainer {
 	display: flex;
 	justify-content: space-around;
+	border: 2px solid white;
 }
 .actcontainer div {
 	color: white;
 	font-size: 24pt;
 	padding: 5px;
 	width: 25%;
+}
+#map {
+	min-height: 250px;
 }
