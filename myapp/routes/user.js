@@ -180,31 +180,6 @@ router.post("/device", function (req, res) {
     }
 });
 
-router.get("/account/data", function (req, res) {
-    if (!req.headers["x-auth"]) {
-        return res.status(401).json({ success: false, message: "No authentication token" });
-    }
-
-    var authToken = req.headers["x-auth"];
-
-    try {
-        var decodedToken = jwt.decode(authToken, secret);
-        User.findOne({ email: decodedToken.email }, function (err, user) {
-            if (err) {
-                return res.status(404).json({ success: false, message: "Error Finding User" });
-            }
-            else {
-                if (!user) {
-                    return res.status(400).json({ success: false, message: "User does not exist." });
-                }
-                return res.status(200).json(user);
-            }
-        });
-    }
-    catch (ex) {
-        return res.status(401).json({ success: false, message: "Invalid authentication token." });
-    }
-});
 
 router.get("/DevSettings", function (req, res) {
     console.log(req.query.devID);
