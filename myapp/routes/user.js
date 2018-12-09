@@ -246,7 +246,7 @@ router.get("/ChangeAct", function (req, res) {
             return res.status(404).json("-1");
         }
         user.activities[req.query.actNum].actTypeAct = req.query.actType;
-        return res.status(403).json("-1");
+        return res.status(200).json("Activity Updated");
     });
 });
 
