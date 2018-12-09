@@ -4,8 +4,8 @@ var User = db.model("user", {
     name: String,
     email: { type: String, unique: true },
     pass: String,
-    uvThresh: Number,
-    actType: String,
+    uvThresh: { type:Number, default: 100},
+    actType: { type: String, default: 'NONE'},
     dev: [{
         devID: String,
         devKey: String
