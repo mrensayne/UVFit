@@ -1,4 +1,3 @@
-
 // Your code here!
 var registeropen = false;
 var loginopen = false;
@@ -56,7 +55,7 @@ function getUVForecast() {
     }
     $.ajax({
         type: "GET",
-        url: "http://api.openweathermap.org/data/2.5/uvi/forecast",
+        url: "https://api.openweathermap.org/data/2.5/uvi/forecast",
         data: {
             appid: "51b27e7f1f098a7d255840aad376f484",
             lat: lat,
@@ -80,7 +79,7 @@ function summarize() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -134,7 +133,7 @@ function summarizeLocal() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -225,7 +224,7 @@ function summarizeGlobal() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -279,7 +278,7 @@ function getAndDisplayDeviceData() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -342,7 +341,7 @@ $(document).ready()
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -373,7 +372,7 @@ function regDevice() {
 
     $.ajax({
         type: "POST",
-        url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/device",
+        url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/device",
         headers: { 'x-auth': localStorage.getItem("auth"), 'dev': $("#deviceinput").val() },
         response: "json"
     }).done(function (data) {
@@ -457,6 +456,12 @@ $summarybtn.hover(function () {
 
 
 $addbtn.click(function () {
+    sumglobalopen = false;
+    $summaryglobal.fadeOut("slow");
+    sumlocalopen = false;
+    $summarylocal.fadeOut("slow");
+    summaryopen = false;
+    $summary.fadeOut("slow");
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
         updateopen = false;
@@ -468,10 +473,6 @@ $addbtn.click(function () {
     if (UVMenuOpen) {
         $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
         UVMenuOpen = false;
-    }
-    if (summaryopen) {
-        $summary.fadeOut("fast");
-        summaryopen = false;
     }
     if (!deviceopen) {
         $devicediv.css("height", "200px");
@@ -502,23 +503,12 @@ $addbtn.click(function () {
 
 
 $regbtn.click(function () {
-    if (changepass) {
-        $("#PassChangeScreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (updateopen) {
-        $("#updatescreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (UVMenuOpen) {
-        $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
-        UVMenuOpen = false;
-    }
-    if (summaryopen) {
-        $summary.fadeOut("fast");
-        summaryopen = false;
-    }
-    $homediv.fadeOut("fast");
+    sumglobalopen = false;
+    $summaryglobal.fadeOut("slow");
+    sumlocalopen = false;
+    $summarylocal.fadeOut("slow");
+    summaryopen = false;
+    $summary.fadeOut("slow");
     if (loginopen && safetochange) {
         safetochange = false;
         $regdiv.css("margin-top", "0");
@@ -556,9 +546,24 @@ $regbtn.click(function () {
         UVMenuOpen = false;
         homeopen = false;
     }
+    else {
+        $homebtn.trigger('click');
+        $regdiv.animate({
+            opacity: 1,
+            marginTop: "-=2000"
+        }, 1000, function () {
+            safetochange = true;
+        });
+    }
 });
 
 $loginbtn.click(function () {
+    sumglobalopen = false;
+    $summaryglobal.fadeOut("slow");
+    sumlocalopen = false;
+    $summarylocal.fadeOut("slow");
+    summaryopen = false;
+    $summary.fadeOut("slow");
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
         updateopen = false;
@@ -570,10 +575,6 @@ $loginbtn.click(function () {
     if (UVMenuOpen) {
         $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
         UVMenuOpen = false;
-    }
-    if (summaryopen) {
-        $summary.fadeOut("fast");
-        summaryopen = false;
     }
     $("#loginerror").html("");
     $("#loginpassword").val("");
@@ -658,13 +659,13 @@ $homebtn.click(function () {
             safetochange = true;
         });
     }
-    else if (summaryopen) {
+    if (summaryopen) {
         $summary.fadeOut("fast");
     }
-    else if (sumlocalopen) {
+    if (sumlocalopen) {
         $summarylocal.fadeOut("fast");
     }
-    else if (sumglobalopen) {
+    if (sumglobalopen) {
         $summaryglobal.fadeOut("fast");
     }
 
