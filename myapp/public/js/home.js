@@ -194,7 +194,7 @@ function changeAct() {
     var user = JSON.parse(localStorage.getItem('currentUser'));
     $.ajax({
         type: "GET",
-        url: "http://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/ChangeAct",
+        url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/ChangeAct",
         data: {
             actType: type,
             devID: user.dev[0].dev, //the index will need to be updated
