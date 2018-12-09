@@ -236,6 +236,20 @@ router.get("/DevSettings", function (req, res) {
     });
 });
 
+router.get("/ChangeAct", function (req, res) {
+    console.log(req.query.devID);
+    User.findOne({ 'name': req.query.name }, function (err, user) {
+        if (err) {
+            return res.status(500).json("-1");
+        }
+        if (user === null) {
+            return res.status(404).json("-1");
+        }
+        user.activities[req.query.actNum].actTypeAct = req.query.actType;
+        return res.status(403).json("-1");
+    });
+});
+
 router.delete("/removeDev", function (req, res) {
     if (!req.headers["x-auth"] || !req.headers["zzrot"]) {
         return res.status(401).json({ success: false, message: "No authentication token or Device" });
