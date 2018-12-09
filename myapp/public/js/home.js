@@ -185,7 +185,7 @@ function summarizeLocal() {
     }
 }
 
-function changeAct() {
+function changeAct(curr) {
     var type = $actTypeChange.val();
     if (type == 0) type = "Auto";
     else if (type == 1) type = "Running";
@@ -197,8 +197,8 @@ function changeAct() {
         url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/ChangeAct",
         data: {
             actType: type,
-            devID: user.dev[0].dev, //the index will need to be updated
-            apiKey: user.dev[0].devKey
+            name: user.name,
+            actNum: curr //whatever the current activity number is
         }
     }).done(function (data) {
         //update local HTML
