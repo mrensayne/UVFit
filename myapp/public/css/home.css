@@ -432,3 +432,13 @@ div {
         color: ghostwhite;
     }
 }
+.actcontainer {
+	display: flex;
+	justify-content: space-around;
+}
+.actcontainer div {
+	color: white;
+	font-size: 24pt;
+	padding: 5px;
+	width: 25%;
+}

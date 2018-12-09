@@ -9,6 +9,7 @@ var updateopen = false;
 var summaryopen = false;
 var sumlocalopen = false;
 var sumglobalopen = false;
+var activitiesopen = false;
 var changepass = false;
 var lat = 0.0;
 var lon = 0.0;
@@ -44,8 +45,106 @@ $avgdistvalg = $("#avgdistvalg");
 $avgcalvalg = $("#avgcalvalg");
 $avguvvalg = $("#avguvvalg");
 $actTypeChange = $("#actTypeChange");
+$activitiesBtn = $("#actslibtn");
+$activities = $("#activities");
 
-
+function getActivities() {
+	console.log("activities clicked!");
+    if (localStorage.auth) {
+        $.ajax({
+            type: "get",
+            url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/account",
+            headers: { 'x-auth': localStorage.getItem("auth") },
+            response: "json"
+        }).done(function (data) {
+            if (data) {
+                localStorage.setItem('currentuser', JSON.stringify(data));
+                //console.log(data);
+				//console.log(JSON.parse(data));
+				var user = data;
+				console.log(user.activities);
+				let acts = document.getElementById("activities");
+				let actHeader = document.createElement("div");
+				actHeader.className = "actcontainer";
+				
+				let actHeaderName = document.createElement("div");
+				let actHeaderDate = document.createElement("div");
+				let actHeaderCal = document.createElement("div");
+				let actHeaderUV = document.createElement("div");
+				
+				actHeaderName.innerHTML = "Type";
+				actHeaderDate.innerHTML = "Date";
+				actHeaderCal.innerHTML = "Calories Burned";
+				actHeaderUV.innerHTML = "Avg UV Exposure";
+				
+				actHeader.appendChild(actHeaderName);
+				actHeader.appendChild(actHeaderDate);
+				actHeader.appendChild(actHeaderCal);
+				actHeader.appendChild(actHeaderUV);
+				
+				acts.appendChild(actHeader);
+				
+                for (var x = 0; x < user.activities.length; x++) {//all activities
+					let sum = 0;
+					let activityContainer = document.createElement("div");
+					activityContainer.className = "actcontainer";
+					activityContainer.value = x;
+					console.log("container value: " + activityContainer.value);
+					let actName = document.createElement("div");
+					let actDate = document.createElement("div");
+					let actCal = document.createElement("div");
+					let actUV = document.createElement("div");
+					
+					actName.innerHTML = user.activities[x].actTypeAct;
+					actDate.innerHTML = user.activities[x].eventTime;
+					actCal.innerHTML = user.activities[x].calories;
+					//console.log(JSON.parse(user.activities[x].UV[0]));
+					let UVData = JSON.parse(user.activities[x].UV[0]);
+					for (let i = 0; i < UVData.length; i++) {
+						sum += UVData[i];
+					//	console.log(sum);
+					}
+					// console.log(sum / user.activities[x].UV[0].length);
+					actUV.innerHTML = sum / UVData.length;
+				
+					activityContainer.appendChild(actName);
+					activityContainer.appendChild(actDate);
+					activityContainer.appendChild(actCal);
+					activityContainer.appendChild(actUV);
+					
+					activityContainer.addEventListener("click", function() {
+						getRoute(this.value);
+						changeAct(this.value);
+					});
+					acts.appendChild(activityContainer);
+	
+                    // var dat = new date(user.activities[x].eventtime);
+                    // if (dat < temp && temp1 < dat) {
+                        // //we need to parse this because it was saved as a json inside of the object instead of as an integer array
+                        // var uvarray = json.parse(user.activities[x].uv);
+                        // //every activity has a total duration. this duration can spam multiple activities, so to calculate this we need to just add up all datapoints grabbed total
+                        // //because we know the frequency of every datapoint is 1hz
+                        // time = time + uvarray.length;
+                        // //calories are calculated per activity so we can simple add them up over all activities
+                        // cal = cal + user.activities[x].calories;
+                        // //we need an extra loop here to add up all uv integers in each activity
+                        // for (var y = 0; y < uvarray.length; y++) {//all data points in an activity
+                            // uv = uv + uvarray[y];
+                        // }
+                    // }
+                }
+            }
+        }).fail(function (data) {
+            localStorage.clear();
+        });
+    }
+    else {
+        localStorage.clear();
+    }
+}
+function getRoute(activityIndex) {
+	console.log(activityIndex);
+}
 
 function getUVForecast() {
     $uvforecast = $("#uvforecast");
@@ -185,7 +284,7 @@ function summarizeLocal() {
     }
 }
 
-function changeAct(curr) {
+function changeAct() {
     var type = $actTypeChange.val();
     if (type == 0) type = "Auto";
     else if (type == 1) type = "Running";
@@ -197,8 +296,8 @@ function changeAct(curr) {
         url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/ChangeAct",
         data: {
             actType: type,
-            name: user.name,
-            actNum: curr //whatever the current activity number is
+            devID: user.dev[0].dev, //the index will need to be updated
+            apiKey: user.dev[0].devKey
         }
     }).done(function (data) {
         //update local HTML
@@ -462,6 +561,8 @@ $addbtn.click(function () {
     $summarylocal.fadeOut("slow");
     summaryopen = false;
     $summary.fadeOut("slow");
+	activitiesopen = false;
+	$activities.fadeOut("slow");
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
         updateopen = false;
@@ -509,6 +610,8 @@ $regbtn.click(function () {
     $summarylocal.fadeOut("slow");
     summaryopen = false;
     $summary.fadeOut("slow");
+	activitiesopen = false;
+	$activities.fadeOut("slow");
     if (loginopen && safetochange) {
         safetochange = false;
         $regdiv.css("margin-top", "0");
@@ -564,6 +667,8 @@ $loginbtn.click(function () {
     $summarylocal.fadeOut("slow");
     summaryopen = false;
     $summary.fadeOut("slow");
+	activitiesopen = false;
+	$activities.fadeOut("slow");
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
         updateopen = false;
@@ -668,6 +773,9 @@ $homebtn.click(function () {
     if (sumglobalopen) {
         $summaryglobal.fadeOut("fast");
     }
+	if (activitiesopen) {
+		$activities.fadeOut("fast");
+	}
 
     $homediv.fadeIn("slow");
 
@@ -680,6 +788,7 @@ $homebtn.click(function () {
     summaryopen = false;
     sumglobalopen = false;
     sumlocalopen = false;
+	activitiesopen = false;
 });
 
 $logoutbtn.click(function () {
@@ -706,4 +815,11 @@ $summaryglobalbtn.click(function () {
     $homebtn.trigger('click');
     $summaryglobal.fadeIn("slow");
     sumglobalopen = true;
+});
+$activitiesBtn.click(function () {
+	getActivities();
+	$homebtn.trigger('click');
+	$activities.fadeIn("slow");
+	activitiesopen = true;
+	$homediv.fadeOut("fast");
 });
