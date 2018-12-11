@@ -298,19 +298,24 @@ function summarizeLocal() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/users",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
             if (data) {
-                localStorage.setItem('currentUser', JSON.stringify(data));
                 for (var z = 0; z < data.length; z++) { //change this based on how we update the API
-                    var user = data;
-                    if ((Math.ceil(JSON.parse(user.activities[0].longitude)[0]) == Math.ceil(lat)) && (Math.ceil(JSON.parse(user.activities[0].latitude)[0]) == Math.ceil(lat))) { //"local" check
+                    var user = data[z];
+                    var currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                    var curuserlong = JSON.parse(currentUser.activities[0].longitude);
+                    var curuserlat = JSON.parse(currentUser.activities[0].latitude);
+                    var checklongarray = JSON.parse(user.activities[0].longitude);
+                    var checklatarray = JSON.parse(user.activities[0].latitude);
+                    if ((checklatarray[0] - 5 <= curuserlat[0] && checklatarray[0] + 5 >= curuserlat[0]) && (checklongarray[0] - 5 <= curuserlong[0] && checklongarray[0] + 5 >= curuserlong[0])) { //"local" check
+                        console.log("made it in local description");
                         for (var x = 0; x < user.activities.length; x++) {
                             actNum++;
                             var UVarray = JSON.parse(user.activities[x].UV);
-                            var speedArray = JSON.parse(user.activies[x].speed);
+                            var speedArray = JSON.parse(user.activities[x].speed);
                             for (var y = 0; y < speedArray.length; y++) {
                                 speed = speed + speedArray[y];
                             }
@@ -389,18 +394,19 @@ function summarizeGlobal() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/account",
+            url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/users",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
             if (data) {
-                localStorage.setItem('currentUser', JSON.stringify(data));
                 for (var z = 0; z < data.length; z++) { //change this based on how we update the API
-                    var user = data;
+                    var user = data[z];
+                    console.log(user);
                     for (var x = 0; x < user.activities.length; x++) {
                         actNum++;
+                        console.log("In for loop");
                         var UVarray = JSON.parse(user.activities[x].UV);
-                        var speedArray = JSON.parse(user.activies[x].speed);
+                        var speedArray = JSON.parse(user.activities[x].speed);
                         for (var y = 0; y < speedArray.length; y++) {
                             speed = speed + speedArray[y];
                         }
@@ -754,7 +760,7 @@ $loginbtn.click(function () {
         $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
         UVMenuOpen = false;
     }
-    $("#loginerror").html("");
+    $("#loginerror").html(""); 
     $("#loginpassword").val("");
     $homediv.fadeOut("fast");
     if (registeropen && safetochange) {
