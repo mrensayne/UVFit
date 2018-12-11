@@ -60,9 +60,8 @@ $update.click(function () {
         headers: { 'x-auth': auth, 'newuser': JSON.stringify(user) },
         response: "json"
     }).done(function (data) {
-        data.name = $fullnameupdate.val();
-        data.email = $emailupdate.val();
-        localStorage.setItem('currentUser', JSON.stringify(data));
+        localStorage.setItem('currentUser', JSON.stringify(data.user));
+        localStorage.setItem('auth', data.auth);
         initSiteForUser();
     }).fail(function (data) {
         console.log(data);

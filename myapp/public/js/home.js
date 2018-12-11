@@ -504,7 +504,7 @@ function initSiteForUser() {
         $homediv.append(deviceDisplay);
         deviceDisplay = "";
     }
-    $homediv.append("<h2>UV Forceast</h2> <div id=\"uvforecast\"></div>");
+    //$homediv.append("<h2>UV Forceast</h2> <div id=\"uvforecast\"></div>");
     getUVForecast();
 }
 
@@ -760,7 +760,7 @@ $loginbtn.click(function () {
         $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
         UVMenuOpen = false;
     }
-    $("#loginerror").html(""); 
+    $("#loginerror").html("");
     $("#loginpassword").val("");
     $homediv.fadeOut("fast");
     if (registeropen && safetochange) {

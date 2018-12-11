@@ -1,4 +1,4 @@
-var errorDiv = document.getElementById("formErrors");
+var errorDiv = document.getElementById("formErrorsRegister");
 var nam = document.getElementById("fullName");
 var email = document.getElementById("email");
 var pass = document.getElementById("password");

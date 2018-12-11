@@ -134,7 +134,17 @@ router.post("/update", function (req, res) {
                 return res.status(403).json({ success: false, message: "User does not exist." });
             }
             try {
-                User.updateOne({ _id: user._id }, { $set: { name: newUser.name, email: newUser.email, uvThresh: newUser.uvThresh, actType: newUser.actType } }).then(result => { return res.status(200).json(user); });
+                User.updateOne({ _id: user._id }, { $set: { name: newUser.name, email: newUser.email, uvThresh: newUser.uvThresh, actType: newUser.actType } }).then(result => {
+                    User.findOne({ _id: user._id }, function (err, finaluser) {
+                        if (err) {
+                            return res.status(505).json("Error when getting final user");
+                        }
+                        if (finaluser) {
+                            var token = jwt.encode(finaluser, secret);
+                            res.status(200).json({ 'user': finaluser, auth: token });
+                        }
+                    });
+                });
             } catch (e) {
                 return res.status(400).json("Failed to update DB");
             }
@@ -144,7 +154,6 @@ router.post("/update", function (req, res) {
         return res.status(401).json({ success: false, message: "Invalid authentication token." });
     }
 });
-
 
 router.post("/device", function (req, res) {
     if (!(req.headers["x-auth"] && req.headers["dev"])) {
