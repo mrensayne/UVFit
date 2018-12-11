@@ -546,10 +546,10 @@ function summarizeGlobal() {
                 calAvg = calAvg / actNum;
             }
             //update html with that data
-            $avguvval.html(UVavg + " mW/cm<sup>2</sup>");
-            $avgdistval.html(distAvg + " meters");
-            $avgcalval.html(calAvg + " calories");
-            $numactsval.html(actNum + " activities");
+            $avguvvalg.html(UVavg + " mW/cm<sup>2</sup>");
+            $avgdistvalg.html(distAvg + " meters");
+            $avgcalvalg.html(calAvg + " calories");
+            $numactsvalg.html(actNum + " activities");
         }).fail(function (data) {
             localStorage.clear();
         });
