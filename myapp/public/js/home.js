@@ -12,6 +12,7 @@ var sumglobalopen = false;
 var activitiesopen = false;
 var activityopen = false;
 var changepass = false;
+var createdTriggerNotActualEvent = true;
 var lat = 0.0;
 var lon = 0.0;
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -114,7 +115,8 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
                 'eventTime': packets[x].eventTime,
                 'eventDuration': packets[x].eventDuration,
                 'latitude': LatArray,
-                'longitude': LongArray
+                'longitude': LongArray,
+                'eventID': packets[x].eventID
             });
             UVArray = 0;
             UVsummation = 0;
@@ -189,7 +191,7 @@ function getActivities() {
 
                     activityContainer.addEventListener("click", function () {
                         getRoute(activities[this.value]);
-                        changeAct(this.value);
+                        //changeAct(this.value);
                         $homebtn.trigger('click');
                         $activity.fadeIn("slow");
                         activityopen = true;
@@ -206,6 +208,8 @@ function getActivities() {
         localStorage.clear();
     }
 }
+
+
 //get details and route of a single activity
 function getRoute(curActivity) {
     let act = document.getElementById("activityMap");
@@ -236,18 +240,31 @@ function getRoute(curActivity) {
 
     let activityContainer = document.createElement("div");
     activityContainer.className = "actcontainer";
-    let actName = document.createElement("div");
     let actDate = document.createElement("div");
     let actCal = document.createElement("div");
     let actUV = document.createElement("div");
     let actDur = document.createElement("div");
+    //Allowing for selection of activity
+    var actName = document.createElement("select");
+    let running = document.createElement("option");
+    let walking = document.createElement("option");
+    let biking = document.createElement("option");
 
-    actName.innerHTML = curActivity.actTypeAct;
+    running.innerHTML = "Running";
+    walking.innerHTML = "Walking";
+    biking.innerHTML = "Biking";
+
+    actName.appendChild(running);
+    actName.appendChild(walking);
+    actName.appendChild(biking);
+
+    actName.value = curActivity.actTypeAct;
+
+
     actDate.innerHTML = curActivity.eventTime;
     actCal.innerHTML = curActivity.calories;
     actDur.innerHTML = curActivity.eventDuration;
     actUV.innerHTML = curActivity.UV / curActivity.eventDuration;
-
 
     activityContainer.appendChild(actName);
     activityContainer.appendChild(actDate);
@@ -261,6 +278,9 @@ function getRoute(curActivity) {
     act.appendChild(mapDOM);
 
     createMap(curActivity.latitude, curActivity.longitude);
+    actName.addEventListener('change', function () {
+        changeAct(curActivity.eventID, actName.options[actName.selectedIndex].text);
+    });
 }
 //uses googleMap API to create a map and route the activity
 function createMap(lats, longs) {
@@ -432,23 +452,23 @@ function summarizeLocal() {
     }
 }
 
-function changeAct(curr) {
-    var type = $actTypeChange.val();
-    if (type == 0) type = "Auto";
-    else if (type == 1) type = "Running";
-    else if (type == 2) type = "Jogging";
-    else type = "Walking";
+//Takes the eventID we are going to want to change as well as what we want to change it to
+function changeAct(eventID, ActType) {
     var user = JSON.parse(localStorage.getItem('currentUser'));
     $.ajax({
         type: "GET",
         url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/ChangeAct",
         data: {
-            actType: type,
-            name: user.name,
-            actNum: curr //whatever the current activity number is
+            'actType': ActType,
+            'email': user.email,
+            'eventID': eventID 
         }
     }).done(function (data) {
         //update local HTML
+        if (data) {
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            localStorage.setItem('auth', data.auth);
+        }
     }).fail(function (data) {
         console.log("Fail: " + data);
     });
@@ -588,6 +608,7 @@ function initSiteForUser() {
 
 $(document).ready()
 {
+    $activity.css("display", "none");
     if (localStorage.auth) {
         $.ajax({
             type: "GET",

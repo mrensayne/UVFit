@@ -235,17 +235,31 @@ router.get("/DevSettings", function (req, res) {
     });
 });
 
+//We need the Activity ID along with The Act Type and Email of User [ eventID, email, actType] : Returns new auth token and the user
 router.get("/ChangeAct", function (req, res) {
-    console.log(req.query.devID);
-    User.findOne({ 'name': req.query.name }, function (err, user) {
+    console.log(req.query);
+    User.findOne({ 'email': req.query.email }, function (err, user) {
         if (err) {
             return res.status(500).json("-1");
         }
-        if (user === null) {
+        if (!user) {
             return res.status(404).json("-1");
         }
-        user.activities[req.query.actNum].actTypeAct = req.query.actType;
-        return res.status(200).json("Activity Updated");
+        for (var x = 0; x < user.activities.length; x++) {
+            if (user.activities[x].eventID == req.query.eventID) {
+                user.activities[x].actTypeAct = req.query.actType;
+            }
+        }
+        try {
+            user.save(function (err, user) {
+                if (err)
+                    return res.status(501).json("error saving into dB");
+                var token = jwt.encode(user, secret);
+                return res.status(200).json({ 'auth': token, 'user': user });
+            });
+        } catch (ex) {
+            return res.status(502).json("Error saving or generating token");
+        }  
     });
 });
 
