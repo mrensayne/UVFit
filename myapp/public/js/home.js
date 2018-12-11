@@ -12,7 +12,6 @@ var sumglobalopen = false;
 var activitiesopen = false;
 var activityopen = false;
 var changepass = false;
-var createdTriggerNotActualEvent = true;
 var lat = 0.0;
 var lon = 0.0;
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
