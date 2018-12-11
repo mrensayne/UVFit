@@ -148,6 +148,7 @@ $remdevbtn.click(function () {
 
 $changePassBtn.click(function () {
     $homebtn.trigger("click");
+    $homediv.css("display", "none");
     $("#PassChangeScreen").fadeIn("fast");
     changepass = true;
 });
