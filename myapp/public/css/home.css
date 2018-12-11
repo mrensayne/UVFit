@@ -100,7 +100,7 @@ a {
     margin: auto;
 }
 
-#summaryglobal, #summarylocal, #summary {
+#summaryglobal, #summarylocal {
     display: none;
     background-color: rgba(28,31,33,.75);
     text-align: center;
@@ -110,6 +110,18 @@ a {
     width: 500px;
     margin: auto;
 }
+
+#summary {
+    display: none;
+    background-color: rgba(28,31,33,.75);
+    text-align: center;
+    color: ghostwhite;
+    font-family: 'Microsoft JhengHei UI';
+    height: 300px;
+    width: 500px;
+    margin: auto;
+}
+
 
 #ActTypeSelect {
     display: block;
