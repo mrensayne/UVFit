@@ -54,7 +54,7 @@ $activity = $("#activity");
 
 //get all activities of user
 function getActivities() {
-	console.log("activities clicked!");
+    console.log("activities clicked!");
     if (localStorage.auth) {
         $.ajax({
             type: "get",
@@ -64,62 +64,62 @@ function getActivities() {
         }).done(function (data) {
             if (data) {
                 localStorage.setItem('currentuser', JSON.stringify(data));
-				var user = data;
-				let acts = document.getElementById("activities");
-				acts.innerHTML = "";
-				let actHeader = document.createElement("div");
-				actHeader.className = "actcontainer";
-				
-				let actHeaderName = document.createElement("div");
-				let actHeaderDate = document.createElement("div");
-				let actHeaderCal = document.createElement("div");
-				let actHeaderUV = document.createElement("div");
-				
-				actHeaderName.innerHTML = "Type";
-				actHeaderDate.innerHTML = "Date";
-				actHeaderCal.innerHTML = "Calories Burned";
-				actHeaderUV.innerHTML = "Avg UV Exposure";
-				
-				actHeader.appendChild(actHeaderName);
-				actHeader.appendChild(actHeaderDate);
-				actHeader.appendChild(actHeaderCal);
-				actHeader.appendChild(actHeaderUV);
-				
-				acts.appendChild(actHeader);
-				
+                var user = data;
+                let acts = document.getElementById("activities");
+                acts.innerHTML = "";
+                let actHeader = document.createElement("div");
+                actHeader.className = "actcontainer";
+
+                let actHeaderName = document.createElement("div");
+                let actHeaderDate = document.createElement("div");
+                let actHeaderCal = document.createElement("div");
+                let actHeaderUV = document.createElement("div");
+
+                actHeaderName.innerHTML = "Type";
+                actHeaderDate.innerHTML = "Date";
+                actHeaderCal.innerHTML = "Calories Burned";
+                actHeaderUV.innerHTML = "Avg UV Exposure";
+
+                actHeader.appendChild(actHeaderName);
+                actHeader.appendChild(actHeaderDate);
+                actHeader.appendChild(actHeaderCal);
+                actHeader.appendChild(actHeaderUV);
+
+                acts.appendChild(actHeader);
+
                 for (var x = 0; x < user.activities.length; x++) {//all activities
-					let sum = 0;
-					let activityContainer = document.createElement("div");
-					activityContainer.className = "actcontainer";
-					activityContainer.value = x;
-					let actName = document.createElement("div");
-					let actDate = document.createElement("div");
-					let actCal = document.createElement("div");
-					let actUV = document.createElement("div");
-					
-					actName.innerHTML = user.activities[x].actTypeAct;
-					actDate.innerHTML = user.activities[x].eventTime;
-					actCal.innerHTML = user.activities[x].calories;
-					let UVData = JSON.parse(user.activities[x].UV[0]);
-					for (let i = 0; i < UVData.length; i++) {
-						sum += UVData[i];
-					}
-					actUV.innerHTML = sum / UVData.length;
-				
-					activityContainer.appendChild(actName);
-					activityContainer.appendChild(actDate);
-					activityContainer.appendChild(actCal);
-					activityContainer.appendChild(actUV);
-					
-					activityContainer.addEventListener("click", function() {
-						getRoute(user.activities[this.value]);
-						changeAct(this.value);
-						$homebtn.trigger('click');
-						$activity.fadeIn("slow");
-						activityopen = true;
-						$homediv.fadeOut("fast");
-					});
-					acts.appendChild(activityContainer);
+                    let sum = 0;
+                    let activityContainer = document.createElement("div");
+                    activityContainer.className = "actcontainer";
+                    activityContainer.value = x;
+                    let actName = document.createElement("div");
+                    let actDate = document.createElement("div");
+                    let actCal = document.createElement("div");
+                    let actUV = document.createElement("div");
+
+                    actName.innerHTML = user.activities[x].actTypeAct;
+                    actDate.innerHTML = user.activities[x].eventTime;
+                    actCal.innerHTML = user.activities[x].calories;
+                    let UVData = JSON.parse(user.activities[x].UV[0]);
+                    for (let i = 0; i < UVData.length; i++) {
+                        sum += UVData[i];
+                    }
+                    actUV.innerHTML = sum / UVData.length;
+
+                    activityContainer.appendChild(actName);
+                    activityContainer.appendChild(actDate);
+                    activityContainer.appendChild(actCal);
+                    activityContainer.appendChild(actUV);
+
+                    activityContainer.addEventListener("click", function () {
+                        getRoute(user.activities[this.value]);
+                        changeAct(this.value);
+                        $homebtn.trigger('click');
+                        $activity.fadeIn("slow");
+                        activityopen = true;
+                        $homediv.fadeOut("fast");
+                    });
+                    acts.appendChild(activityContainer);
                 }
             }
         }).fail(function (data) {
@@ -132,86 +132,86 @@ function getActivities() {
 }
 //get details and route of a single activity
 function getRoute(curActivity) {
-	let act = document.getElementById("activity");
-	act.innerHTML = "";
-	let actHeader = document.createElement("div");
-	actHeader.className = "actcontainer";
-	
-	let actHeaderName = document.createElement("div");
-	let actHeaderDate = document.createElement("div");
-	let actHeaderCal = document.createElement("div");
-	let actHeaderUV = document.createElement("div");
-	
-	actHeaderName.innerHTML = "Type";
-	actHeaderDate.innerHTML = "Date";
-	actHeaderCal.innerHTML = "Calories Burned";
-	actHeaderUV.innerHTML = "Avg UV Exposure";
+    let act = document.getElementById("activity");
+    act.innerHTML = "";
+    let actHeader = document.createElement("div");
+    actHeader.className = "actcontainer";
 
-	actHeader.appendChild(actHeaderName);
-	actHeader.appendChild(actHeaderDate);
-	actHeader.appendChild(actHeaderCal);
-	actHeader.appendChild(actHeaderUV);
+    let actHeaderName = document.createElement("div");
+    let actHeaderDate = document.createElement("div");
+    let actHeaderCal = document.createElement("div");
+    let actHeaderUV = document.createElement("div");
 
-	act.appendChild(actHeader);
-	
-	let activityContainer = document.createElement("div");
-	activityContainer.className = "actcontainer";
-	let actName = document.createElement("div");
-	let actDate = document.createElement("div");
-	let actCal = document.createElement("div");
-	let actUV = document.createElement("div");
-	
-	actName.innerHTML = curActivity.actTypeAct;
-	actDate.innerHTML = curActivity.eventTime;
-	actCal.innerHTML = curActivity.calories;
-	let UVData = JSON.parse(curActivity.UV[0]);
-	let sum = 0;
-	for (let i = 0; i < UVData.length; i++) {
-		sum += UVData[i];
-	}
-	actUV.innerHTML = sum / UVData.length;
+    actHeaderName.innerHTML = "Type";
+    actHeaderDate.innerHTML = "Date";
+    actHeaderCal.innerHTML = "Calories Burned";
+    actHeaderUV.innerHTML = "Avg UV Exposure";
 
-	activityContainer.appendChild(actName);
-	activityContainer.appendChild(actDate);
-	activityContainer.appendChild(actCal);
-	activityContainer.appendChild(actUV);
-	act.appendChild(activityContainer);
-	
-	let mapDOM = document.createElement("div");
-	mapDOM.id = "map";
-	act.appendChild(mapDOM);
-	
-	let latArray = JSON.parse(curActivity.latitude);
-	let longArray = JSON.parse(curActivity.longitude);
-	createMap(latArray, longArray);
+    actHeader.appendChild(actHeaderName);
+    actHeader.appendChild(actHeaderDate);
+    actHeader.appendChild(actHeaderCal);
+    actHeader.appendChild(actHeaderUV);
+
+    act.appendChild(actHeader);
+
+    let activityContainer = document.createElement("div");
+    activityContainer.className = "actcontainer";
+    let actName = document.createElement("div");
+    let actDate = document.createElement("div");
+    let actCal = document.createElement("div");
+    let actUV = document.createElement("div");
+
+    actName.innerHTML = curActivity.actTypeAct;
+    actDate.innerHTML = curActivity.eventTime;
+    actCal.innerHTML = curActivity.calories;
+    let UVData = JSON.parse(curActivity.UV[0]);
+    let sum = 0;
+    for (let i = 0; i < UVData.length; i++) {
+        sum += UVData[i];
+    }
+    actUV.innerHTML = sum / UVData.length;
+
+    activityContainer.appendChild(actName);
+    activityContainer.appendChild(actDate);
+    activityContainer.appendChild(actCal);
+    activityContainer.appendChild(actUV);
+    act.appendChild(activityContainer);
+
+    let mapDOM = document.createElement("div");
+    mapDOM.id = "map";
+    act.appendChild(mapDOM);
+
+    let latArray = JSON.parse(curActivity.latitude);
+    let longArray = JSON.parse(curActivity.longitude);
+    createMap(latArray, longArray);
 }
 //uses googleMap API to create a map and route the activity
 function createMap(lats, longs) {
-  var map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 12
-  });
-	var flightPathCoordinates = [];
-	let bounds = new google.maps.LatLngBounds();
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12
+    });
+    var flightPathCoordinates = [];
+    let bounds = new google.maps.LatLngBounds();
 
-	for(let i = 0; i < lats.length; i++) {
-		let point = { lat: lats[i], lng: longs[i] };
-		var marker = new google.maps.Marker({
-			position: point,
-			label: labels[labelIndex++ % labels.length],
-			map: map
-			});
-		
-		flightPathCoordinates.push(marker.getPosition());
-		bounds.extend(marker.position);	
-	}
-	map.fitBounds(bounds);
-	var flightPath = new google.maps.Polyline({
-		map: map,
-		path: flightPathCoordinates,
-		strokeColor: "#FF0000",
-		strokeOpacity: 1.0,
-		strokeWeight: 2
-		});
+    for (let i = 0; i < lats.length; i++) {
+        let point = { lat: lats[i], lng: longs[i] };
+        var marker = new google.maps.Marker({
+            position: point,
+            label: labels[labelIndex++ % labels.length],
+            map: map
+        });
+
+        flightPathCoordinates.push(marker.getPosition());
+        bounds.extend(marker.position);
+    }
+    map.fitBounds(bounds);
+    var flightPath = new google.maps.Polyline({
+        map: map,
+        path: flightPathCoordinates,
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    });
 }
 function getUVForecast() {
     $uvforecast = $("#uvforecast");
@@ -628,10 +628,10 @@ $addbtn.click(function () {
     $summarylocal.fadeOut("slow");
     summaryopen = false;
     $summary.fadeOut("slow");
-	activitiesopen = false;
-	$activities.fadeOut("slow");
-	activityopen = false;
-	$activity.fadeOut("slow");
+    activitiesopen = false;
+    $activities.fadeOut("slow");
+    activityopen = false;
+    $activity.fadeOut("slow");
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
         updateopen = false;
@@ -679,10 +679,10 @@ $regbtn.click(function () {
     $summarylocal.fadeOut("slow");
     summaryopen = false;
     $summary.fadeOut("slow");
-	activitiesopen = false;
-	$activities.fadeOut("slow");
-	activityopen = false;
-	$activity.fadeOut("slow");
+    activitiesopen = false;
+    $activities.fadeOut("slow");
+    activityopen = false;
+    $activity.fadeOut("slow");
     if (loginopen && safetochange) {
         safetochange = false;
         $regdiv.css("margin-top", "0");
@@ -738,10 +738,10 @@ $loginbtn.click(function () {
     $summarylocal.fadeOut("slow");
     summaryopen = false;
     $summary.fadeOut("slow");
-	activitiesopen = false;
-	$activities.fadeOut("slow");
-	activityopen = false;
-	$activity.fadeOut("slow");
+    activitiesopen = false;
+    $activities.fadeOut("slow");
+    activityopen = false;
+    $activity.fadeOut("slow");
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
         updateopen = false;
@@ -846,12 +846,12 @@ $homebtn.click(function () {
     if (sumglobalopen) {
         $summaryglobal.fadeOut("fast");
     }
-	if (activitiesopen) {
-		$activities.fadeOut("fast");
-	}
-	if (activityopen) {
-		$activity.fadeOut("fast");
-	}
+    if (activitiesopen) {
+        $activities.fadeOut("fast");
+    }
+    if (activityopen) {
+        $activity.fadeOut("fast");
+    }
 
     $homediv.fadeIn("slow");
 
@@ -864,19 +864,20 @@ $homebtn.click(function () {
     summaryopen = false;
     sumglobalopen = false;
     sumlocalopen = false;
-	activitiesopen = false;
-	activityopen = false;
+    activitiesopen = false;
+    activityopen = false;
 });
 
 $logoutbtn.click(function () {
     var auth2 = gapi.auth2.getAuthInstance();
-    if(auth2) auth2.signOut();
+    if (auth2) auth2.signOut();
     localStorage.clear();
     location.reload(true);
 });
 
 $summarybtn.click(function () {
     $homebtn.trigger('click');
+    $homediv.css("display", "none");
     summarize();
     $summary.fadeIn("slow");
     summaryopen = true;
@@ -885,6 +886,7 @@ $summarybtn.click(function () {
 $summarylocalbtn.click(function () {
     summarizeLocal();
     $homebtn.trigger('click');
+    $homediv.css("display", "none");
     $summarylocal.fadeIn("slow");
     sumlocalopen = true;
 });
@@ -892,13 +894,15 @@ $summarylocalbtn.click(function () {
 $summaryglobalbtn.click(function () {
     summarizeGlobal();
     $homebtn.trigger('click');
+    $homediv.css("display", "none");
     $summaryglobal.fadeIn("slow");
     sumglobalopen = true;
 });
 $activitiesBtn.click(function () {
-	getActivities();
-	$homebtn.trigger('click');
-	$activities.fadeIn("slow");
-	activitiesopen = true;
-	$homediv.fadeOut("fast");
+    getActivities();
+    $homebtn.trigger('click');
+    $homediv.css("display", "none");
+    $activities.fadeIn("slow");
+    activitiesopen = true;
+    $homediv.fadeOut("fast");
 });

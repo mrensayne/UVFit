@@ -85,8 +85,8 @@ $uvThreshBtn.click(function () {
                 $uvthreshinput.val(data.uvThresh);
                 $("#UVSeth1").text("Configure Device").css("color", "ghostwhite");
                 $homebtn.trigger("click");
+                $homediv.css("display", "none");
                 $("#UvThreshMenuScreen").fadeIn("slow").css("height", "260px");
-                $homediv.fadeOut("fast");
                 UVMenuOpen = true;
                 $("#ActTypeSelect").val(data.actType);
             }
