@@ -80,7 +80,7 @@ function reg() {
     };
     $.ajax({
         type: "POST",
-        url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/register",
+        url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/register",
         data: JSON.stringify(queryString),
         contentType: "application/json"
     }).done(function (data) {

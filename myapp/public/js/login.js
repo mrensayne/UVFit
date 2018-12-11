@@ -11,7 +11,7 @@ function loginuser() {
     var test = JSON.stringify(queryString);
     $.ajax({
         type: "GET",
-        url: "https://ec2-35-172-134-252.compute-1.amazonaws.com:3000/home.html/user/login",
+        url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/login",
         data: queryString,
         contentType: "application/json",
         response: "application/json"
