@@ -179,7 +179,9 @@ select {
     margin-bottom: 15px;
 }
 
-
+#activities{
+background-color:#212121;
+}
 
 #updatescreen, #UvThreshMenuScreen, #PassChangeScreen {
     display: none;
