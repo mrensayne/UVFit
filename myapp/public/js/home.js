@@ -324,7 +324,7 @@ function getUVForecast() {
             cnt: "3"
         }
     }).done(function (data) {
-        $uvforecast.html("<table><caption>UV Forecast for (" + data[0].lat + ", " + data[0].lon + ")</caption> <tr><td>Today</td><td>" + data[0].value + "</td></tr><tr><td>Tomorrow</td><td>" + data[1].value + "</td></tr><tr><td>Day After Tomorrow</td><td>" + data[2].value + "</td></tr></table>");
+        $uvforecast.html("<table><caption>UV Forecast for (" + data[0].lat + ", " + data[0].lon + ")</caption> <tr><td>Today</td><td>" + data[0].value + " mW/cm<sup>2</sup></td></tr><tr><td>Tomorrow</td><td>" + data[1].value + "mW/cm<sup>2</sup></td></tr><tr><td>Day After Tomorrow</td><td>" + data[2].value + "mW/cm<sup>2</sup></td></tr></table>");
     }).fail(function (data) {
         console.log("Fail: " + data);
     });
@@ -365,7 +365,7 @@ function summarize() {
                 }
             }
             $sumtimeval.html(time + " seconds");
-            $sumuvval.html(uv);
+            $sumuvval.html(uv + " mW/cm<sup>2</sup>");
             $sumcalval.html(cal + " calories");
         }).fail(function (data) {
             localStorage.clear();
@@ -386,6 +386,7 @@ function summarizeLocal() {
     var calAvg = 0.0;
     var actNum = 0.0;
     var i = 0;
+    var act;
     var temp = new Date();
     if (temp.getDate() <= 7) var temp1 = new Date(temp.getFullYear(), temp.getMonth() - 1, 30 - (7 - temp.getDate()));
     else var temp1 = new Date(temp.getFullYear(), temp.getMonth(), temp.getDate() - 7);
@@ -407,16 +408,17 @@ function summarizeLocal() {
                     var checklatarray = JSON.parse(user.activities[0].latitude);
                     if ((checklatarray[0] - 5 <= curuserlat[0] && checklatarray[0] + 5 >= curuserlat[0]) && (checklongarray[0] - 5 <= curuserlong[0] && checklongarray[0] + 5 >= curuserlong[0])) { //"local" check
                         console.log("made it in local description");
-                        for (var x = 0; x < user.activities.length; x++) {
+                        act = combinePacketsToActivities(user.activities);
+                        for (var x = 0; x < act.length; x++) {
                             actNum++;
-                            var UVarray = JSON.parse(user.activities[x].UV);
-                            var speedArray = JSON.parse(user.activities[x].speed);
+                            var UVarray = JSON.parse(act[x].UV);
+                            var speedArray = JSON.parse(act[x].speed);
                             for (var y = 0; y < speedArray.length; y++) {
                                 speed = speed + speedArray[y];
                             }
                             speed = speed / speedArray.length;
                             dist = UVarray.length * speed; //time * speed average
-                            cal = cal + user.activities[x].calories;
+                            cal = cal + act[x].calories;
                             //We need an extra loop here to add up all UV integers in each activity
                             for (var y = 0; y < UVarray.length; y++) {//All data points in an activity
                                 uv = uv + UVarray[y];
@@ -437,10 +439,10 @@ function summarizeLocal() {
                 calAvg = calAvg / actNum;
             }
             //update html with that data
-            $avguvval.html(UVavg);
-            $avgdistval.html(distAvg);
-            $avgcalval.html(calAvg);
-            $numactsval.html(actNum);
+            $avguvval.html(UVavg + " mW/cm<sup>2</sup>");
+            $avgdistval.html(distAvg + " meters");
+            $avgcalval.html(calAvg + " calories");
+            $numactsval.html(actNum + " activities");
         }).fail(function (data) {
             localStorage.clear();
         });
@@ -482,6 +484,7 @@ function summarizeGlobal() {
     var calAvg = 0.0;
     var actNum = 0.0;
     var i = 0;
+    var act;
     var temp = new Date();
     if (temp.getDate() <= 7) var temp1 = new Date(temp.getFullYear(), temp.getMonth() - 1, 30 - (7 - temp.getDate()));
     else var temp1 = new Date(temp.getFullYear(), temp.getMonth(), temp.getDate() - 7);
@@ -497,17 +500,18 @@ function summarizeGlobal() {
                 for (var z = 0; z < data.length; z++) { //change this based on how we update the API
                     var user = data[z];
                     console.log(user);
-                    for (var x = 0; x < user.activities.length; x++) {
+                    act = combinePacketsToActivities(user.activities);
+                    for (var x = 0; x < act.length; x++) {
                         actNum++;
                         console.log("In for loop");
-                        var UVarray = JSON.parse(user.activities[x].UV);
-                        var speedArray = JSON.parse(user.activities[x].speed);
+                        var UVarray = JSON.parse(act[x].UV);
+                        var speedArray = JSON.parse(act[x].speed);
                         for (var y = 0; y < speedArray.length; y++) {
                             speed = speed + speedArray[y];
                         }
                         speed = speed / speedArray.length;
                         dist = UVarray.length * speed; //time * speed average
-                        cal = cal + user.activities[x].calories;
+                        cal = cal + act[x].calories;
                         //We need an extra loop here to add up all UV integers in each activity
                         for (var y = 0; y < UVarray.length; y++) {//All data points in an activity
                             uv = uv + UVarray[y];
@@ -527,10 +531,10 @@ function summarizeGlobal() {
                 calAvg = calAvg / actNum;
             }
             //update html with that data
-            $avguvvalg.html(UVavg);
-            $avgdistvalg.html(distAvg);
-            $avgcalvalg.html(calAvg);
-            $numactsvalg.html(actNum);
+            $avguvval.html(UVavg + " mW/cm<sup>2</sup>");
+            $avgdistval.html(distAvg + " meters");
+            $avgcalval.html(calAvg + " calories");
+            $numactsval.html(actNum + " activities");
         }).fail(function (data) {
             localStorage.clear();
         });
