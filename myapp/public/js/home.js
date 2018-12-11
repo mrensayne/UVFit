@@ -480,6 +480,7 @@ function initSiteForUser() {
     var user = JSON.parse(localStorage.getItem('currentUser'));
     $("#userInfo").text(user.name);
     $("#logtogglein").css("display", "none");
+    $(".g-signin2").css("display", "none");
     $("#logtoggleout").css("display", "inline-block");
     $("#updateli").css("display", "inline-block");
     $("#uvthreshli").css("display", "inline-block");
@@ -868,6 +869,8 @@ $homebtn.click(function () {
 });
 
 $logoutbtn.click(function () {
+    var auth2 = gapi.auth2.getAuthInstance();
+    if(auth2) auth2.signOut();
     localStorage.clear();
     location.reload(true);
 });
