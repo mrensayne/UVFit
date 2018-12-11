@@ -60,23 +60,22 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
     var actTypeAct;
     var CalSummation = 0;
     var nextPacketPartOfCurAct;
-
-    //Initial state machine check so we know what to do///////////
     var currEventId = packets[0].eventID;
-    if (typeof packets[1] === 'undefined') { // There is no next packet
-        nextPacketPartOfCurAct = false;
-    }
-    else {// we are safe to check ahead
-        if (packets[1].eventID == currEventId) { // The next packet is part of our current activity
-            nextPacketPartOfCurAct = true;
-        }
-        else {// Next Packet is a new activity
-            nextPacketPartOfCurAct = false;
-        }
-    }
-    ///////////////////////////////////////////////////////////////
 
     for (var x = 0; x < packets.length; x++) {
+        //State Machine to find out what whether the next packet is part of our activity or not
+        if (typeof packets[x + 1] === 'undefined') { // There is no next packet
+            nextPacketPartOfCurAct = false;
+        }
+        else {// we are safe to check ahead
+            if (packets[x + 1].eventID == currEventId) { // The next packet is part of our current activity
+                nextPacketPartOfCurAct = true;
+            }
+            else {// Next Packet is a new activity
+                nextPacketPartOfCurAct = false;
+                currEventId = packets[x + 1].eventID;
+            }
+        }
         if (nextPacketPartOfCurAct) { // We know the next packet will be part of current activity
             var UVArray = JSON.parse(packets[x].UV);
             for (var i = 0; i < UVArray.length; i++) {//summing up all UV in Packet
@@ -98,20 +97,10 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
                 'eventTime': packets[x].eventTime,
                 'eventDuration': packets[x].eventDuration
             });
+            UVArray = 0;
+            UVsummation = 0;
         }
-        //State Machine to find out what whether the next packet is part of our activity or not
-        if (typeof packets[x + 1] === 'undefined') { // There is no next packet
-            nextPacketPartOfCurAct = false;
-        }
-        else {// we are safe to check ahead
-            if (packets[x + 1].eventID == currEventId) { // The next packet is part of our current activity
-                nextPacketPartOfCurAct = true;
-            }
-            else {// Next Packet is a new activity
-                nextPacketPartOfCurAct = false;
-                currEventId = packets[x + 1].eventID;
-            }
-        }
+
 
     }
     return activities;
