@@ -155,7 +155,6 @@ router.post("/update", function (req, res) {
     }
 });
 
-
 router.post("/device", function (req, res) {
     if (!(req.headers["x-auth"] && req.headers["dev"])) {
         return res.status(401).json({ success: false, message: "No authentication token" });
