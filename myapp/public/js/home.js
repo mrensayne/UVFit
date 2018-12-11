@@ -279,7 +279,6 @@ function summarize() {
     else {
         localStorage.clear();
     }
-
 }
 
 function summarizeLocal() {
