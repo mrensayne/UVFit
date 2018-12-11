@@ -179,8 +179,14 @@ select {
     margin-bottom: 15px;
 }
 
-#activities{
-background-color:#212121;
+#activities {
+    background-color: #212121;
+}
+
+#activityMap {
+    background-color: #212121;
+    height: 100%;
+    width:100%;
 }
 
 #updatescreen, #UvThreshMenuScreen, #PassChangeScreen {
@@ -421,5 +427,5 @@ div {
 	width: 25%;
 }
 #map {
-	min-height: 250px;
+	min-height: 100%;
 }

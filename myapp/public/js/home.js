@@ -50,7 +50,17 @@ $avguvvalg = $("#avguvvalg");
 $actTypeChange = $("#actTypeChange");
 $activitiesBtn = $("#actslibtn");
 $activities = $("#activities");
-$activity = $("#activity");
+$activity = $("#activityMap");
+
+function concatArray(oldArray, newArray) {
+    var returnArray = []
+    returnArray = oldArray;
+    var returnArrayLength = returnArray.length;
+    for (var x = 0; x < newArray.length; x++) {
+        returnArray[x + returnArrayLength] = newArray[x];
+    }
+    return returnArray;
+}
 
 function combinePacketsToActivities(packets) {// Finally will fix all problems when it comes to packets being confused as activities [Will return activties array where each element is a full activity]
     var activities = [];
@@ -59,6 +69,8 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
     var deviceID;
     var actTypeAct;
     var CalSummation = 0;
+    var LatArray = [];
+    var LongArray = [];
     var nextPacketPartOfCurAct;
     var currEventId = packets[0].eventID;
 
@@ -82,6 +94,9 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
                 UVsummation += UVArray[i];
             }
             CalSummation += packets[x].calories;
+            LatArray = concatArray(LatArray, JSON.parse(packets[x].latitude));
+            LongArray = concatArray(LongArray, JSON.parse(packets[x].longitude));
+
         }
         else { // We know that this will be the end of our activity
             var UVArray = JSON.parse(packets[x].UV);
@@ -89,16 +104,22 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
                 UVsummation += UVArray[i];
             }
             CalSummation += packets[x].calories;
+            LatArray = concatArray(LatArray, JSON.parse(packets[x].latitude));
+            LongArray = concatArray(LongArray, JSON.parse(packets[x].longitude));
             activities.push({
                 'UV': UVsummation,
                 'deviceID': packets[x].deviceID,
                 'actTypeAct': packets[x].actTypeAct,
                 'calories': CalSummation,
                 'eventTime': packets[x].eventTime,
-                'eventDuration': packets[x].eventDuration
+                'eventDuration': packets[x].eventDuration,
+                'latitude': LatArray,
+                'longitude': LongArray
             });
             UVArray = 0;
             UVsummation = 0;
+            LatArray = [];
+            LongArray = [];
         }
 
 
@@ -145,7 +166,6 @@ function getActivities() {
                 var activities = combinePacketsToActivities(data.activities);
                 console.log(activities);
                 for (var x = 0; x < activities.length; x++) {//all activities
-                    let sum = 0;
                     let activityContainer = document.createElement("div");
                     activityContainer.className = "actcontainer";
                     activityContainer.value = x;
@@ -168,7 +188,7 @@ function getActivities() {
                     activityContainer.appendChild(actDur);
 
                     activityContainer.addEventListener("click", function () {
-                        getRoute(user.activities[this.value]);
+                        getRoute(activities[this.value]);
                         changeAct(this.value);
                         $homebtn.trigger('click');
                         $activity.fadeIn("slow");
@@ -188,8 +208,9 @@ function getActivities() {
 }
 //get details and route of a single activity
 function getRoute(curActivity) {
-    let act = document.getElementById("activity");
+    let act = document.getElementById("activityMap");
     act.innerHTML = "";
+
     let actHeader = document.createElement("div");
     actHeader.className = "actcontainer";
 
@@ -197,16 +218,19 @@ function getRoute(curActivity) {
     let actHeaderDate = document.createElement("div");
     let actHeaderCal = document.createElement("div");
     let actHeaderUV = document.createElement("div");
+    let actHeaderDur = document.createElement("div");
 
     actHeaderName.innerHTML = "Type";
     actHeaderDate.innerHTML = "Date";
     actHeaderCal.innerHTML = "Calories Burned";
     actHeaderUV.innerHTML = "Avg UV Exposure";
+    actHeaderDur.innerHTML = "Activity Duration";
 
     actHeader.appendChild(actHeaderName);
     actHeader.appendChild(actHeaderDate);
     actHeader.appendChild(actHeaderCal);
     actHeader.appendChild(actHeaderUV);
+    actHeader.appendChild(actHeaderDur);
 
     act.appendChild(actHeader);
 
@@ -216,30 +240,27 @@ function getRoute(curActivity) {
     let actDate = document.createElement("div");
     let actCal = document.createElement("div");
     let actUV = document.createElement("div");
+    let actDur = document.createElement("div");
 
     actName.innerHTML = curActivity.actTypeAct;
     actDate.innerHTML = curActivity.eventTime;
     actCal.innerHTML = curActivity.calories;
-    let UVData = JSON.parse(curActivity.UV[0]);
-    let sum = 0;
-    for (let i = 0; i < UVData.length; i++) {
-        sum += UVData[i];
-    }
-    actUV.innerHTML = sum / UVData.length;
+    actDur.innerHTML = curActivity.eventDuration;
+    actUV.innerHTML = curActivity.UV / curActivity.eventDuration;
+
 
     activityContainer.appendChild(actName);
     activityContainer.appendChild(actDate);
     activityContainer.appendChild(actCal);
     activityContainer.appendChild(actUV);
+    activityContainer.appendChild(actDur);
     act.appendChild(activityContainer);
 
     let mapDOM = document.createElement("div");
     mapDOM.id = "map";
     act.appendChild(mapDOM);
 
-    let latArray = JSON.parse(curActivity.latitude);
-    let longArray = JSON.parse(curActivity.longitude);
-    createMap(latArray, longArray);
+    createMap(curActivity.latitude, curActivity.longitude);
 }
 //uses googleMap API to create a map and route the activity
 function createMap(lats, longs) {
@@ -540,6 +561,7 @@ function getAndDisplayDeviceData() {
 
 function initSiteForUser() {
     var user = JSON.parse(localStorage.getItem('currentUser'));
+    $activity.css("display", "none");
     $("#userInfo").text(user.name);
     $("#logtogglein").css("display", "none");
     $(".g-signin2").css("display", "none");
