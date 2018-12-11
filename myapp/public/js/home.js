@@ -72,9 +72,9 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
     var LongArray = [];
     var nextPacketPartOfCurAct;
     var currEventId = packets[0].eventID;
-    var SpeedArray = [];
+   // var SpeedArray = [];
     var UVArrayFinal = [];
-    var SpeedSummation = 0;
+   // var SpeedSummation = 0;
 
     for (var x = 0; x < packets.length; x++) {
         //State Machine to find out what whether the next packet is part of our activity or not
@@ -92,28 +92,28 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
         }
         if (nextPacketPartOfCurAct) { // We know the next packet will be part of current activity
             var UVArray = JSON.parse(packets[x].UV);
-            var SpeedArrayLocal = JSON.parse(packets[x].speed);
+            //var SpeedArrayLocal = JSON.parse(packets[x].speed);
             for (var i = 0; i < UVArray.length; i++) {//summing up all UV in Packet
                 UVsummation += UVArray[i];
-                SpeedSummation += SpeedArrayLocal[i];
+               // SpeedSummation += SpeedArrayLocal[i];
             }
             CalSummation += packets[x].calories;
             LatArray = concatArray(LatArray, JSON.parse(packets[x].latitude));
             LongArray = concatArray(LongArray, JSON.parse(packets[x].longitude));
-            SpeedArray = concatArray(SpeedArray, JSON.parse(packets[x].speed));
+           // SpeedArray = concatArray(SpeedArray, JSON.parse(packets[x].speed));
             UVArrayFinal = concatArray(UVArrayFinal, UVArray);
         }
         else { // We know that this will be the end of our activity
             var UVArray = JSON.parse(packets[x].UV);
-            var SpeedArrayLocal = JSON.parse(packets[x].speed);
+          //  var SpeedArrayLocal = JSON.parse(packets[x].speed);
             for (var i = 0; i < UVArray.length; i++) {//summing up all UV in Packet
                 UVsummation += UVArray[i];
-                SpeedSummation += SpeedArrayLocal[i];
+               // SpeedSummation += SpeedArrayLocal[i];
             }
             CalSummation += packets[x].calories;
             LatArray = concatArray(LatArray, JSON.parse(packets[x].latitude));
             LongArray = concatArray(LongArray, JSON.parse(packets[x].longitude));
-            SpeedArray = concatArray(SpeedArray, JSON.parse(packets[x].speed));
+           // SpeedArray = concatArray(SpeedArray, JSON.parse(packets[x].speed));
             UVArrayFinal = concatArray(UVArrayFinal, UVArray);
             activities.push({
                 'UV': UVsummation,
@@ -125,17 +125,17 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
                 'eventDuration': packets[x].eventDuration,
                 'latitude': LatArray,
                 'longitude': LongArray,
-                'eventID': packets[x].eventID,
-                'speed': SpeedSummation,
-                'SpeedArray': SpeedArray
+                'eventID': packets[x].eventID
+               // 'speed': SpeedSummation
+                //'SpeedArray': SpeedArray
             });
             UVArray = 0;
             UVsummation = 0;
             LatArray = [];
             LongArray = [];
-            SpeedArray = [];
+            //SpeedArray = [];
             UVArrayFinal = [];
-            SpeedSummation = 0;
+           // SpeedSummation = 0;
         }
 
 

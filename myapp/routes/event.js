@@ -20,7 +20,7 @@ router.post("/", function(req, res) {
 						var act = "";
                         if (speedArray[0] < 5) {
                             act = "Walking";
-                            //.3914 is in units [(calorie*second)/(meter) and speedArray is in units (meters/second)]
+                            //.1864 is in units [(calorie*second)/(meter) and speedArray is in units (meters/second)]
                             cal = speedArray[0] * .1864; //assuming user weight of 200, taken from https://www.runnersworld.com/nutrition-weight-loss/a20825897/how-many-calories-are-you-really-burning-0/	
                         }
                         else if (speedArray[0] < 10) {
@@ -30,7 +30,7 @@ router.post("/", function(req, res) {
                         }
                         else {
                             act = "Biking";
-                            //.3914 is in units [(calorie*second)/(meter) and speedArray is in units (meters/second)]
+                            //.2114 is in units [(calorie*second)/(meter) and speedArray is in units (meters/second)]
                             cal = speedArray[0] * .2114; //assuming user weight of 200, taken from https://www.runnersworld.com/nutrition-weight-loss/a20825897/how-many-calories-are-you-really-burning-0/	
                         }
 						var activ = { eventTime: req.body.x, eventDuration : req.body.y, eventID : req.body.f, deviceID : req.body.a, longitude : req.body.b, latitude : req.body.c, UV : req.body.d, speed : req.body.e, actTypeAct : act , calories : cal };
