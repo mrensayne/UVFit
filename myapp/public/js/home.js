@@ -519,7 +519,7 @@ function summarizeGlobal() {
                     act = combinePacketsToActivities(user.activities);
                     for (var x = 0; x < act.length; x++) {
                         actNum++;
-                        var UVarray = act[x].UVArrayFinal;
+                        var UVarray = act[x].UVArray;
                         var speedArray = act[x].SpeedArray;
                         for (var y = 0; y < speedArray.length; y++) {
                             speed = speed + speedArray[y];
