@@ -869,8 +869,8 @@ $homebtn.click(function () {
 });
 
 $logoutbtn.click(function () {
-    var auth2 = gapi.auth2.getAuthInstance();
-    if (auth2) auth2.signOut();
+    //var auth2 = gapi.auth2.getAuthInstance();
+    //if (auth2) auth2.signOut();
     localStorage.clear();
     location.reload(true);
 });
