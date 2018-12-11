@@ -52,6 +52,71 @@ $activitiesBtn = $("#actslibtn");
 $activities = $("#activities");
 $activity = $("#activity");
 
+function combinePacketsToActivities(packets) {// Finally will fix all problems when it comes to packets being confused as activities [Will return activties array where each element is a full activity]
+    var activities = [];
+    var UVsummation = 0;
+    var eventTime;
+    var deviceID;
+    var actTypeAct;
+    var CalSummation = 0;
+    var nextPacketPartOfCurAct;
+
+    //Initial state machine check so we know what to do///////////
+    var currEventId = packets[0].eventID;
+    if (typeof packets[1] === 'undefined') { // There is no next packet
+        nextPacketPartOfCurAct = false;
+    }
+    else {// we are safe to check ahead
+        if (packets[1].eventID == currEventId) { // The next packet is part of our current activity
+            nextPacketPartOfCurAct = true;
+        }
+        else {// Next Packet is a new activity
+            nextPacketPartOfCurAct = false;
+        }
+    }
+    ///////////////////////////////////////////////////////////////
+
+    for (var x = 0; x < packets.length; x++) {
+        if (nextPacketPartOfCurAct) { // We know the next packet will be part of current activity
+            var UVArray = JSON.parse(packets[x].UV);
+            for (var i = 0; i < UVArray.length; i++) {//summing up all UV in Packet
+                UVsummation += UVArray[i];
+            }
+            CalSummation += packets[x].calories;
+        }
+        else { // We know that this will be the end of our activity
+            var UVArray = JSON.parse(packets[x].UV);
+            for (var i = 0; i < UVArray.length; i++) {//summing up all UV in Packet
+                UVsummation += UVArray[i];
+            }
+            CalSummation += packets[x].calories;
+            activities.push({
+                'UV': UVsummation,
+                'deviceID': packets[x].deviceID,
+                'actTypeAct': packets[x].actTypeAct,
+                'calories': CalSummation,
+                'eventTime': packets[x].eventTime,
+                'eventDuration': packets[x].eventDuration
+            });
+        }
+        //State Machine to find out what whether the next packet is part of our activity or not
+        if (typeof packets[x + 1] === 'undefined') { // There is no next packet
+            nextPacketPartOfCurAct = false;
+        }
+        else {// we are safe to check ahead
+            if (packets[x + 1].eventID == currEventId) { // The next packet is part of our current activity
+                nextPacketPartOfCurAct = true;
+            }
+            else {// Next Packet is a new activity
+                nextPacketPartOfCurAct = false;
+                currEventId = packets[x + 1].eventID;
+            }
+        }
+
+    }
+    return activities;
+}
+
 //get all activities of user
 function getActivities() {
     console.log("activities clicked!");
@@ -64,7 +129,6 @@ function getActivities() {
         }).done(function (data) {
             if (data) {
                 localStorage.setItem('currentuser', JSON.stringify(data));
-                var user = data;
                 let acts = document.getElementById("activities");
                 acts.innerHTML = "";
                 let actHeader = document.createElement("div");
@@ -74,20 +138,24 @@ function getActivities() {
                 let actHeaderDate = document.createElement("div");
                 let actHeaderCal = document.createElement("div");
                 let actHeaderUV = document.createElement("div");
+                let actHeaderDur = document.createElement("div");
 
                 actHeaderName.innerHTML = "Type";
                 actHeaderDate.innerHTML = "Date";
                 actHeaderCal.innerHTML = "Calories Burned";
                 actHeaderUV.innerHTML = "Avg UV Exposure";
+                actHeaderDur.innerHTML = "Activity Duration";
 
                 actHeader.appendChild(actHeaderName);
                 actHeader.appendChild(actHeaderDate);
                 actHeader.appendChild(actHeaderCal);
                 actHeader.appendChild(actHeaderUV);
+                actHeader.appendChild(actHeaderDur);
 
                 acts.appendChild(actHeader);
-
-                for (var x = 0; x < user.activities.length; x++) {//all activities
+                var activities = combinePacketsToActivities(data.activities);
+                console.log(activities);
+                for (var x = 0; x < activities.length; x++) {//all activities
                     let sum = 0;
                     let activityContainer = document.createElement("div");
                     activityContainer.className = "actcontainer";
@@ -96,20 +164,19 @@ function getActivities() {
                     let actDate = document.createElement("div");
                     let actCal = document.createElement("div");
                     let actUV = document.createElement("div");
+                    let actDur = document.createElement("div");
 
-                    actName.innerHTML = user.activities[x].actTypeAct;
-                    actDate.innerHTML = user.activities[x].eventTime;
-                    actCal.innerHTML = user.activities[x].calories;
-                    let UVData = JSON.parse(user.activities[x].UV[0]);
-                    for (let i = 0; i < UVData.length; i++) {
-                        sum += UVData[i];
-                    }
-                    actUV.innerHTML = sum / UVData.length;
+                    actName.innerHTML = activities[x].actTypeAct;
+                    actDate.innerHTML = activities[x].eventTime;
+                    actCal.innerHTML = activities[x].calories;
+                    actUV.innerHTML = activities[x].UV;
+                    actDur.innerHTML = activities[x].eventDuration;
 
                     activityContainer.appendChild(actName);
                     activityContainer.appendChild(actDate);
                     activityContainer.appendChild(actCal);
                     activityContainer.appendChild(actUV);
+                    activityContainer.appendChild(actDur);
 
                     activityContainer.addEventListener("click", function () {
                         getRoute(user.activities[this.value]);
