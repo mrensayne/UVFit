@@ -22,7 +22,6 @@ $regbtn = $("#registerbtn");
 $conbtn = $("#contactbtn");
 $regdiv = $("#registerscreen");
 $logdiv = $("#loginscreen");
-$homebtn = $("#homebtn");
 $homediv = $("#homescreen");
 $logoutbtn = $("#logoutbtn");
 $addbtn = $("#AddDevicebtn");

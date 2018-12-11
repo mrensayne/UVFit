@@ -39,6 +39,7 @@ function loginuser() {
                 $homediv.append(deviceDisplay);
                 deviceDisplay = "";
             }
+            location.reload(true);
         }
     }).fail(function (data) {
         if (data.status == 401) {
