@@ -154,7 +154,7 @@ function getActivities() {
                 actHeaderName.innerHTML = "Type";
                 actHeaderDate.innerHTML = "Date";
                 actHeaderCal.innerHTML = "Calories Burned";
-                actHeaderUV.innerHTML = "Avg UV Exposure";
+                actHeaderUV.innerHTML = "Total UV Exposure";
                 actHeaderDur.innerHTML = "Activity Duration";
 
                 actHeader.appendChild(actHeaderName);

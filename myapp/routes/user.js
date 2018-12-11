@@ -218,7 +218,7 @@ router.get("/DevSettings", function (req, res) {
             if (user.dev[x].devID == req.query.devID) {//We found the device
                 if (user.dev[x].devKey == req.query.apiKey) {// The api key is a match	
                     var tempAct = "";
-                    if (user.actType == "Auto")
+                    if (user.actType == "Auto" || user.actType == "NONE")
                         tempAct = "0";
                     if (user.actType == "Running")
                         tempAct = "1";
