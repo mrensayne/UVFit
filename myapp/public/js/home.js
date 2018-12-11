@@ -427,8 +427,8 @@ function summarizeLocal() {
                         act = combinePacketsToActivities(user.activities);
                         for (var x = 0; x < act.length; x++) {
                             actNum++;
-                            var UVarray = JSON.parse(act[x].UV);
-                            var speedArray = JSON.parse(act[x].speed);
+                            var UVarray = act[x].UVArrayFinal;
+                            var speedArray = act[x].SpeedArray;
                             for (var y = 0; y < speedArray.length; y++) {
                                 speed = speed + speedArray[y];
                             }
@@ -519,9 +519,8 @@ function summarizeGlobal() {
                     act = combinePacketsToActivities(user.activities);
                     for (var x = 0; x < act.length; x++) {
                         actNum++;
-                        console.log("In for loop");
-                        var UVarray = JSON.parse(act[x].UV);
-                        var speedArray = JSON.parse(act[x].speed);
+                        var UVarray = act[x].UVArrayFinal;
+                        var speedArray = act[x].SpeedArray;
                         for (var y = 0; y < speedArray.length; y++) {
                             speed = speed + speedArray[y];
                         }
