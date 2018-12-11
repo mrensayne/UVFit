@@ -10,9 +10,12 @@ var summaryopen = false;
 var sumlocalopen = false;
 var sumglobalopen = false;
 var activitiesopen = false;
+var activityopen = false;
 var changepass = false;
 var lat = 0.0;
 var lon = 0.0;
+var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var labelIndex = 0;
 $homebtn = $("#homebtn");
 $loginbtn = $("#loginbtn");
 $regbtn = $("#registerbtn");
@@ -47,7 +50,9 @@ $avguvvalg = $("#avguvvalg");
 $actTypeChange = $("#actTypeChange");
 $activitiesBtn = $("#actslibtn");
 $activities = $("#activities");
+$activity = $("#activity");
 
+//get all activities of user
 function getActivities() {
 	console.log("activities clicked!");
     if (localStorage.auth) {
@@ -59,11 +64,9 @@ function getActivities() {
         }).done(function (data) {
             if (data) {
                 localStorage.setItem('currentuser', JSON.stringify(data));
-                //console.log(data);
-				//console.log(JSON.parse(data));
 				var user = data;
-				console.log(user.activities);
 				let acts = document.getElementById("activities");
+				acts.innerHTML = "";
 				let actHeader = document.createElement("div");
 				actHeader.className = "actcontainer";
 				
@@ -89,7 +92,6 @@ function getActivities() {
 					let activityContainer = document.createElement("div");
 					activityContainer.className = "actcontainer";
 					activityContainer.value = x;
-					console.log("container value: " + activityContainer.value);
 					let actName = document.createElement("div");
 					let actDate = document.createElement("div");
 					let actCal = document.createElement("div");
@@ -98,13 +100,10 @@ function getActivities() {
 					actName.innerHTML = user.activities[x].actTypeAct;
 					actDate.innerHTML = user.activities[x].eventTime;
 					actCal.innerHTML = user.activities[x].calories;
-					//console.log(JSON.parse(user.activities[x].UV[0]));
 					let UVData = JSON.parse(user.activities[x].UV[0]);
 					for (let i = 0; i < UVData.length; i++) {
 						sum += UVData[i];
-					//	console.log(sum);
 					}
-					// console.log(sum / user.activities[x].UV[0].length);
 					actUV.innerHTML = sum / UVData.length;
 				
 					activityContainer.appendChild(actName);
@@ -113,25 +112,14 @@ function getActivities() {
 					activityContainer.appendChild(actUV);
 					
 					activityContainer.addEventListener("click", function() {
-						getRoute(this.value);
+						getRoute(user.activities[this.value]);
 						changeAct(this.value);
+						$homebtn.trigger('click');
+						$activity.fadeIn("slow");
+						activityopen = true;
+						$homediv.fadeOut("fast");
 					});
 					acts.appendChild(activityContainer);
-	
-                    // var dat = new date(user.activities[x].eventtime);
-                    // if (dat < temp && temp1 < dat) {
-                        // //we need to parse this because it was saved as a json inside of the object instead of as an integer array
-                        // var uvarray = json.parse(user.activities[x].uv);
-                        // //every activity has a total duration. this duration can spam multiple activities, so to calculate this we need to just add up all datapoints grabbed total
-                        // //because we know the frequency of every datapoint is 1hz
-                        // time = time + uvarray.length;
-                        // //calories are calculated per activity so we can simple add them up over all activities
-                        // cal = cal + user.activities[x].calories;
-                        // //we need an extra loop here to add up all uv integers in each activity
-                        // for (var y = 0; y < uvarray.length; y++) {//all data points in an activity
-                            // uv = uv + uvarray[y];
-                        // }
-                    // }
                 }
             }
         }).fail(function (data) {
@@ -142,10 +130,89 @@ function getActivities() {
         localStorage.clear();
     }
 }
-function getRoute(activityIndex) {
-	console.log(activityIndex);
-}
+//get details and route of a single activity
+function getRoute(curActivity) {
+	let act = document.getElementById("activity");
+	act.innerHTML = "";
+	let actHeader = document.createElement("div");
+	actHeader.className = "actcontainer";
+	
+	let actHeaderName = document.createElement("div");
+	let actHeaderDate = document.createElement("div");
+	let actHeaderCal = document.createElement("div");
+	let actHeaderUV = document.createElement("div");
+	
+	actHeaderName.innerHTML = "Type";
+	actHeaderDate.innerHTML = "Date";
+	actHeaderCal.innerHTML = "Calories Burned";
+	actHeaderUV.innerHTML = "Avg UV Exposure";
 
+	actHeader.appendChild(actHeaderName);
+	actHeader.appendChild(actHeaderDate);
+	actHeader.appendChild(actHeaderCal);
+	actHeader.appendChild(actHeaderUV);
+
+	act.appendChild(actHeader);
+	
+	let activityContainer = document.createElement("div");
+	activityContainer.className = "actcontainer";
+	let actName = document.createElement("div");
+	let actDate = document.createElement("div");
+	let actCal = document.createElement("div");
+	let actUV = document.createElement("div");
+	
+	actName.innerHTML = curActivity.actTypeAct;
+	actDate.innerHTML = curActivity.eventTime;
+	actCal.innerHTML = curActivity.calories;
+	let UVData = JSON.parse(curActivity.UV[0]);
+	let sum = 0;
+	for (let i = 0; i < UVData.length; i++) {
+		sum += UVData[i];
+	}
+	actUV.innerHTML = sum / UVData.length;
+
+	activityContainer.appendChild(actName);
+	activityContainer.appendChild(actDate);
+	activityContainer.appendChild(actCal);
+	activityContainer.appendChild(actUV);
+	act.appendChild(activityContainer);
+	
+	let mapDOM = document.createElement("div");
+	mapDOM.id = "map";
+	act.appendChild(mapDOM);
+	
+	let latArray = JSON.parse(curActivity.latitude);
+	let longArray = JSON.parse(curActivity.longitude);
+	createMap(latArray, longArray);
+}
+//uses googleMap API to create a map and route the activity
+function createMap(lats, longs) {
+  var map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 12
+  });
+	var flightPathCoordinates = [];
+	let bounds = new google.maps.LatLngBounds();
+
+	for(let i = 0; i < lats.length; i++) {
+		let point = { lat: lats[i], lng: longs[i] };
+		var marker = new google.maps.Marker({
+			position: point,
+			label: labels[labelIndex++ % labels.length],
+			map: map
+			});
+		
+		flightPathCoordinates.push(marker.getPosition());
+		bounds.extend(marker.position);	
+	}
+	map.fitBounds(bounds);
+	var flightPath = new google.maps.Polyline({
+		map: map,
+		path: flightPathCoordinates,
+		strokeColor: "#FF0000",
+		strokeOpacity: 1.0,
+		strokeWeight: 2
+		});
+}
 function getUVForecast() {
     $uvforecast = $("#uvforecast");
     if (lat == 0.0 || lon == 0.0) { //default if we haven't gotten lat/lon values yet
@@ -563,6 +630,8 @@ $addbtn.click(function () {
     $summary.fadeOut("slow");
 	activitiesopen = false;
 	$activities.fadeOut("slow");
+	activityopen = false;
+	$activity.fadeOut("slow");
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
         updateopen = false;
@@ -612,6 +681,8 @@ $regbtn.click(function () {
     $summary.fadeOut("slow");
 	activitiesopen = false;
 	$activities.fadeOut("slow");
+	activityopen = false;
+	$activity.fadeOut("slow");
     if (loginopen && safetochange) {
         safetochange = false;
         $regdiv.css("margin-top", "0");
@@ -669,6 +740,8 @@ $loginbtn.click(function () {
     $summary.fadeOut("slow");
 	activitiesopen = false;
 	$activities.fadeOut("slow");
+	activityopen = false;
+	$activity.fadeOut("slow");
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
         updateopen = false;
@@ -776,6 +849,9 @@ $homebtn.click(function () {
 	if (activitiesopen) {
 		$activities.fadeOut("fast");
 	}
+	if (activityopen) {
+		$activity.fadeOut("fast");
+	}
 
     $homediv.fadeIn("slow");
 
@@ -789,6 +865,7 @@ $homebtn.click(function () {
     sumglobalopen = false;
     sumlocalopen = false;
 	activitiesopen = false;
+	activityopen = false;
 });
 
 $logoutbtn.click(function () {
