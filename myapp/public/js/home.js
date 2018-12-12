@@ -138,8 +138,6 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
             SpeedSummation = 0;
             CalSummation = 0;
         }
-
-
     }
     return activities;
 }
