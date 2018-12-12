@@ -154,6 +154,7 @@ function getActivities() {
         }).done(function (data) {
             if (data) {
                 localStorage.setItem('currentuser', JSON.stringify(data));
+				//create activities list
                 let acts = document.getElementById("activities");
                 acts.innerHTML = "";
                 let actHeader = document.createElement("div");
@@ -180,6 +181,7 @@ function getActivities() {
                 acts.appendChild(actHeader);
                 var activities = combinePacketsToActivities(data.activities);
                 console.log(activities);
+				//for each activity, list the activity
                 for (var x = 0; x < activities.length; x++) {//all activities
                     let activityContainer = document.createElement("div");
                     activityContainer.className = "actcontainer";
