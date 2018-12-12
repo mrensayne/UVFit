@@ -7,7 +7,7 @@ var sub = document.getElementById("submit");
 var $userh1 = $("#userh1");
 sub.addEventListener("click", validate);
 
-function validate() {
+function validate() { //validation to make sure all inputs are proper
     var success = true;
     var errorString = "";
     if (nam.value.length < 1) {
@@ -70,7 +70,7 @@ function validate() {
         $("#registerscreen").css("height", "500px");
 }
 
-function reg() {
+function reg() { //called if all inputs passed
     var queryString = {
         name: nam.value,
         email: email.value,
@@ -80,7 +80,7 @@ function reg() {
     };
     $.ajax({
         type: "POST",
-        url: "https://ece513final.tk:3000/home.html/user/register",
+        url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/register",
         data: JSON.stringify(queryString),
         contentType: "application/json"
     }).done(function (data) {

@@ -9,7 +9,7 @@ var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 
 var secret = fs.readFileSync(__dirname + '/../../../secretkey.txt').toString();
-
+//for detailed information on how to call these endpoints and what they do, see the included word doc
 
 router.post("/register", function (req, res) {
     var noDup = true;
@@ -60,91 +60,29 @@ router.post("/register", function (req, res) {
 
 
 router.get("/login", function (req, res) {
-	//not a google user
-	if (!req.query.name) {
-		console.log("no name, regular login reached");
-		
-		User.findOne({ email: req.query.email }, function (err, user) {
-			if (err) {
-				res.status(400).send(err);
-			} else if (!user) {
-				res.status(401).json({ success: false, error: "The email or password provided was invalid." });
-			} else if (!user.isVerified) {
-				res.status(401).json({ success: false, error: "Your account has not been verified." });
-			} else if (user.isGoogle) {
-				res.status(401).json({ success: false, error: "Please log in using Google log in." });
-			} else {
-				bcrypt.compare(req.query.password, user.pass, function (err, valid) {
-					if (err) {
-						res.status(401).json({ person: {}, success: false, error: "Error authenticating. Please contact support." });
-					}
-					else if (valid) {
-						var token = jwt.encode(user, secret);
-						res.status(201).json({ person: user, auth: token, success: true });
-					}
-					else {
-						res.status(401).json({ success: false, error: "The email or password provided was invalid." });
-					}
-				});
-			}
-		});
-	}
-	//google login
-	else {
-		console.log("google log in reached");
-		var noDup = true;
 
-		User.find({ email: req.query.email }, function (err, user) {
-			if (err) {
-				res.status(400).send(err);
-			}
-			if (user.length) {
-				noDup = false;
-				console.log("user found");
-				//return res.status(400).json({ success: false, error: "Email or Device already in use" });
-				var token = jwt.encode(user, secret);
-				res.status(201).json({person: user, auth: token, success: true });
-			}
-			if (noDup) {
-				console.log("user creating");
-				// bcrypt.hash(req.body.pass, null, null, function (err, hash) {
-					// if (err) {
-						// console.log("hash failed???");
-						// return res.status(500).json(err);
-					// }
-					// else {
-				var user = new User({
-					name: req.query.name,
-					email: req.query.email,
-					uvThresh: 100,
-					actType: "NONE",
-					isGoogle: true
-				});
-				user.save(function (err, user) {
-					if (err) { return res.status(500).json(err); }
-					// var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex') });
-					// token.save(function (err) {
-						// if (err) { return res.status(500).json(err); }
-						// var transporter = nodemailer.createTransport({ service: 'Gmail', auth: { user: 'ece513final@gmail.com', pass: 'eceproject321!' } });
-						// console.log(req.body.email);
-						// var mailOptions = {
-							// from: 'no-reply@uvfit.com',
-							// to: req.body.email,
-							// subject: 'Account Verification Link',
-							// text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttps:\/\/' + req.headers.host + '\/home.html\/user\/confirmation?token=' + token.token + '.\n'
-						// };
-						// transporter.sendMail(mailOptions, function (err) {
-							// if (err) { return res.status(500).json(err); }
-					console.log("user saved");
-					res.status(201).send();
-						// });
-					// });
-				});
-					// }
-				// });
-			}
-		});
-	}
+    User.findOne({ email: req.query.email }, function (err, user) {
+        if (err) {
+            res.status(400).send(err);
+        } else if (!user) {
+            res.status(401).json({ success: false, error: "The email or password provided was invalid." });
+        } else if (!user.isVerified) {
+            res.status(401).json({ success: false, error: "Your account has not been verified." });
+        } else {
+            bcrypt.compare(req.query.password, user.pass, function (err, valid) {
+                if (err) {
+                    res.status(401).json({ person: {}, success: false, error: "Error authenticating. Please contact support." });
+                }
+                else if (valid) {
+                    var token = jwt.encode(user, secret);
+                    res.status(201).json({ person: user, auth: token, success: true });
+                }
+                else {
+                    res.status(401).json({ success: false, error: "The email or password provided was invalid." });
+                }
+            });
+        }
+    });
 });
 router.get("/account", function (req, res) {
     if (!req.headers["x-auth"]) {
@@ -172,7 +110,7 @@ router.get("/account", function (req, res) {
     }
 });
 
-function getNewApikey() {
+function getNewApikey() { //generate a new APIKEY
     var newApikey = "";
     var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
