@@ -558,6 +558,7 @@ function summarizeGlobal() {
     }
 }
 
+
 function getAndDisplayDeviceData() {
     if (localStorage.auth) {
         $.ajax({
@@ -595,6 +596,7 @@ function getAndDisplayDeviceData() {
 
 }
 
+//This is called when we want to init the site for a user that has just logged in
 function initSiteForUser() {
     var user = JSON.parse(localStorage.getItem('currentUser'));
     $activity.css("display", "none");

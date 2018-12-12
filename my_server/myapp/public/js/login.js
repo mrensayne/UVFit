@@ -3,6 +3,8 @@ $useremaillog = $("#loginemail");
 $userpasslog = $("#loginpassword");
 $loginuserbtn = $("#loginuserbtn");
 
+
+//Helper function that deals with the ajax request to server and initializes website if successful login
 function loginuser() {
     var queryString = {
         email: $useremaillog.val(),
@@ -60,6 +62,7 @@ function onSignIn(googleUser) {
     console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
 }
 
+//The button used to submit a user login request to the server
 $loginuserbtn.click(function () {
     var useremailerror = false;
     var userpassworderror = false;
