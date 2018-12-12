@@ -16,5 +16,7 @@ Current link to server: https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/
 
 Pitch Video: https://drive.google.com/file/d/1WoV83la6jaAj0CfkchWnETBbGr6WNjIm/view?usp=sharing
 
+Demo Video: https://drive.google.com/file/d/1WoeqXZiyJrr8bo7Pko4wagbz62L2rqHy/view?usp=sharing
+
 
 
