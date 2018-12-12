@@ -18,7 +18,6 @@ var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
 $homebtn = $("#homebtn");
 $loginbtn = $("#loginbtn");
-$gloginbtn = $(".g-signin2");
 $regbtn = $("#registerbtn");
 $conbtn = $("#contactbtn");
 $regdiv = $("#registerscreen");
@@ -149,7 +148,7 @@ function getActivities() {
     if (localStorage.auth) {
         $.ajax({
             type: "get",
-            url: "https://ece513final.tk:3000/home.html/user/account",
+            url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -324,7 +323,7 @@ function createMap(lats, longs) {
         strokeWeight: 2
     });
 }
-function getUVForecast() {
+function getUVForecast() { //send a GET request to open weather map to get UV values for the next three days
     $uvforecast = $("#uvforecast");
     if (lat == 0.0 || lon == 0.0) { //default if we haven't gotten lat/lon values yet
         lat = 30.75;
@@ -334,37 +333,37 @@ function getUVForecast() {
         type: "GET",
         url: "https://api.openweathermap.org/data/2.5/uvi/forecast",
         data: {
-            appid: "51b27e7f1f098a7d255840aad376f484",
-            lat: lat,
+            appid: "51b27e7f1f098a7d255840aad376f484", //api key for owm
+            lat: lat, //lat and lon for user's location
             lon: lon,
-            cnt: "3"
+            cnt: "3" //number of days to get dat for
         }
-    }).done(function (data) {
+    }).done(function (data) { //if successful, load into table for display
         $uvforecast.html("<table><caption>UV Forecast for (" + data[0].lat + ", " + data[0].lon + ")</caption> <tr><td>Today</td><td>" + data[0].value + " mW/cm<sup>2</sup></td></tr><tr><td>Tomorrow</td><td>" + data[1].value + "mW/cm<sup>2</sup></td></tr><tr><td>Day After Tomorrow</td><td>" + data[2].value + "mW/cm<sup>2</sup></td></tr></table>");
     }).fail(function (data) {
         console.log("Fail: " + data);
     });
 }
 
-function summarize() {
-    var time = 0.0;
+function summarize() { //function used to summarize data and then display it in summary view
+    var time = 0.0; //init values
     var uv = 0.0;
     var cal = 0.0;
-    var temp = new Date();
+    var temp = new Date(); //this line and the next two are to limit to acts within the last seven days
     if (temp.getDate() <= 7) var temp1 = new Date(temp.getFullYear(), temp.getMonth() - 1, 30 - (7 - temp.getDate()));
     else var temp1 = new Date(temp.getFullYear(), temp.getMonth(), temp.getDate() - 7);
-    if (localStorage.auth) {
+    if (localStorage.auth) { //if logged in
         $.ajax({
             type: "GET",
-            url: "https://ece513final.tk:3000/home.html/user/account",
+            url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
-            if (data) {
+            if (data) { //if you get a response, load it into current user and start calculations
                 localStorage.setItem('currentUser', JSON.stringify(data));
                 var user = data;
                 for (var x = 0; x < user.activities.length; x++) {//All Activities
-                    var dat = new Date(user.activities[x].eventTime);
+                    var dat = new Date(user.activities[x].eventTime); //make sure within last seven days
                     if (dat < temp && temp1 < dat) {
                         //We need to parse this because it was saved as a JSON inside of the object instead of as an integer array
                         var UVarray = JSON.parse(user.activities[x].UV);
@@ -380,7 +379,7 @@ function summarize() {
                     }
                 }
             }
-            $sumtimeval.html(time + " seconds");
+            $sumtimeval.html(time + " seconds"); //save values to html to display
             $sumuvval.html(uv + " mW/cm<sup>2</sup>");
             $sumcalval.html(cal + " calories");
         }).fail(function (data) {
@@ -392,8 +391,8 @@ function summarize() {
     }
 }
 
-function summarizeLocal() {
-    var dist = 0.0;
+function summarizeLocal() { //similar to last function, this is across all users to show local data
+    var dist = 0.0; //init values
     var uv = 0.0;
     var cal = 0.0;
     var speed = 0.0;
@@ -403,45 +402,45 @@ function summarizeLocal() {
     var actNum = 0.0;
     var i = 0;
     var act;
-    var temp = new Date();
+    var temp = new Date(); //see last function
     if (temp.getDate() <= 7) var temp1 = new Date(temp.getFullYear(), temp.getMonth() - 1, 30 - (7 - temp.getDate()));
     else var temp1 = new Date(temp.getFullYear(), temp.getMonth(), temp.getDate() - 7);
     //need to alter the API to allow pulling *all* users
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "https://ece513final.tk:3000/home.html/user/users",
+            url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/users",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
             if (data) {
                 for (var z = 0; z < data.length; z++) { //change this based on how we update the API
-                    var user = data[z];
+                    var user = data[z]; //data returned all users; let's focus on the current item
                     var currentUser = JSON.parse(localStorage.getItem('currentUser'));
                     var curuserlong = JSON.parse(currentUser.activities[0].longitude);
                     var curuserlat = JSON.parse(currentUser.activities[0].latitude);
                     var checklongarray = JSON.parse(user.activities[0].longitude);
-                    var checklatarray = JSON.parse(user.activities[0].latitude);
+                    var checklatarray = JSON.parse(user.activities[0].latitude); //these lines and below are to filter to local users
                     if ((checklatarray[0] - 5 <= curuserlat[0] && checklatarray[0] + 5 >= curuserlat[0]) && (checklongarray[0] - 5 <= curuserlong[0] && checklongarray[0] + 5 >= curuserlong[0])) { //"local" check
                         console.log("made it in local description");
-                        act = combinePacketsToActivities(user.activities);
-                        for (var x = 0; x < act.length; x++) {
-                            actNum++;
-                            var UVarray = act[x].UVArray;
-                            var speedArray = act[x].SpeedArray;
+                        act = combinePacketsToActivities(user.activities); //convert packet data into parseable array
+                        for (var x = 0; x < act.length; x++) { //for all activities
+                            actNum++; //count how many activities
+                            var UVarray = act[x].UVArray; //load in UV values
+                            var speedArray = act[x].SpeedArray; //load in speed values
                             for (var y = 0; y < speedArray.length; y++) {
-                                speed = speed + speedArray[y];
+                                speed = speed + speedArray[y]; //sum up speed values
                             }
-                            speed = speed / speedArray.length;
-                            dist = UVarray.length * speed; //time * speed average
-                            cal = cal + act[x].calories;
+                            speed = speed / speedArray.length; //find average speed
+                            dist = UVarray.length * speed; //time * speed average to calculate distance
+                            cal = cal + act[x].calories; //sum up calories burned
                             //We need an extra loop here to add up all UV integers in each activity
                             for (var y = 0; y < UVarray.length; y++) {//All data points in an activity
-                                uv = uv + UVarray[y];
-                                i++;
+                                uv = uv + UVarray[y]; //summing up all uv values
+                                i++; //so we know how many total uv values there were
                             }
                         }
-                        UVavg = UVavg + uv;
+                        UVavg = UVavg + uv; //these lines clear temp vars and create a running total
                         distAvg = distAvg + dist;
                         calAvg = calAvg + cal;
                         uv = 0.0;
@@ -450,7 +449,7 @@ function summarizeLocal() {
                         speed = 0.0;
                     }
                 }
-                UVavg = UVavg / i;
+                UVavg = UVavg / i; //divide the running total to find the averages
                 distAvg = distAvg / actNum;
                 calAvg = calAvg / actNum;
             }
@@ -469,19 +468,19 @@ function summarizeLocal() {
 }
 
 //Takes the eventID we are going to want to change as well as what we want to change it to
-function changeAct(eventID, ActType) {
-    var user = JSON.parse(localStorage.getItem('currentUser'));
+function changeAct(eventID, ActType) { //this gets called when a user wants to change an activity type
+    var user = JSON.parse(localStorage.getItem('currentUser')); //get the current user
     $.ajax({
         type: "GET",
-        url: "https://ece513final.tk:3000/home.html/user/ChangeAct",
+        url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/ChangeAct",
         data: {
-            'actType': ActType,
+            'actType': ActType, //send the new activity type and eventID
             'email': user.email,
             'eventID': eventID 
         }
     }).done(function (data) {
         //update local HTML
-        if (data) {
+        if (data) { //update local copy
             localStorage.setItem('currentUser', JSON.stringify(data.user));
             localStorage.setItem('auth', data.auth);
         }
@@ -489,7 +488,7 @@ function changeAct(eventID, ActType) {
         console.log("Fail: " + data);
     });
 }
-
+//this is pretty much identical to the summarizeLocal function, except without the filter. differences noted below
 function summarizeGlobal() {
     var dist = 0.0;
     var uv = 0.0;
@@ -508,7 +507,7 @@ function summarizeGlobal() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "https://ece513final.tk:3000/home.html/user/users",
+            url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/users",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -516,7 +515,7 @@ function summarizeGlobal() {
                 for (var z = 0; z < data.length; z++) { //change this based on how we update the API
                     var user = data[z];
                     console.log(user);
-                    act = combinePacketsToActivities(user.activities);
+                    act = combinePacketsToActivities(user.activities); //no filter for local here
                     for (var x = 0; x < act.length; x++) {
                         actNum++;
                         var UVarray = act[x].UVArray;
@@ -546,7 +545,7 @@ function summarizeGlobal() {
                 calAvg = calAvg / actNum;
             }
             //update html with that data
-            $avguvvalg.html(UVavg + " mW/cm<sup>2</sup>");
+            $avguvvalg.html(UVavg + " mW/cm<sup>2</sup>"); //different html objects updated-- avguvval vs avguvvalg
             $avgdistvalg.html(distAvg + " meters");
             $avgcalvalg.html(calAvg + " calories");
             $numactsvalg.html(actNum + " activities");
@@ -563,7 +562,7 @@ function getAndDisplayDeviceData() {
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "https://ece513final.tk:3000/home.html/user/account",
+            url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -598,7 +597,6 @@ function getAndDisplayDeviceData() {
 
 function initSiteForUser() {
     var user = JSON.parse(localStorage.getItem('currentUser'));
-	console.log(user);
     $activity.css("display", "none");
     $("#userInfo").text(user.name);
     $("#logtogglein").css("display", "none");
@@ -630,7 +628,7 @@ $(document).ready()
     if (localStorage.auth) {
         $.ajax({
             type: "GET",
-            url: "https://ece513final.tk:3000/home.html/user/account",
+            url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/account",
             headers: { 'x-auth': localStorage.getItem("auth") },
             response: "json"
         }).done(function (data) {
@@ -661,7 +659,7 @@ function regDevice() {
 
     $.ajax({
         type: "POST",
-        url: "https://ece513final.tk:3000/home.html/user/device",
+        url: "https://ec2-54-156-137-117.compute-1.amazonaws.com:3000/home.html/user/device",
         headers: { 'x-auth': localStorage.getItem("auth"), 'dev': $("#deviceinput").val() },
         response: "json"
     }).done(function (data) {
@@ -741,7 +739,7 @@ $summarybtn.hover(function () {
     $summarybtn.css("background-color", "#2d2d2d");
 });
 
-
+//pretty much all of the below functions are entirely used to switch between different views
 
 
 $addbtn.click(function () {
@@ -917,69 +915,7 @@ $loginbtn.click(function () {
         homeopen = false;
     }
 });
-$gloginbtn.click(function () {
-    sumglobalopen = false;
-    $summaryglobal.fadeOut("slow");
-    sumlocalopen = false;
-    $summarylocal.fadeOut("slow");
-    summaryopen = false;
-    $summary.fadeOut("slow");
-    activitiesopen = false;
-    $activities.fadeOut("slow");
-    activityopen = false;
-    $activity.fadeOut("slow");
-    if (changepass) {
-        $("#PassChangeScreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (updateopen) {
-        $("#updatescreen").fadeOut("fast");
-        updateopen = false;
-    }
-    if (UVMenuOpen) {
-        $("#UvThreshMenuScreen").fadeOut("fast").css("height", "260px");
-        UVMenuOpen = false;
-    }
-    $("#loginerror").html("");
-    $("#loginpassword").val("");
-    $homediv.fadeOut("fast");
-    if (registeropen && safetochange) {
-        safetochange = false;
-        $logdiv.css("margin-top", "0");
-        $logdiv.css("margin-left", "-2000px").css("opacity", "1").css("display", "block");
-        $regdiv.animate({
-            marginLeft: "+=2000",
-        }, {
-                duration: 1000, queue: false, complete: function () {
-                    safetochange = true;
-                }
-            });
-        $logdiv.animate({
-            marginLeft: $logdiv.parent().width() / 2 - $logdiv.width() / 2
-        }, {
-                duration: 1000, queue: false, complete: function () {
-                    safetochange = true;
-                }
-            });
-        loginopen = true;
-        registeropen = false;
-    }
-    else if (!loginopen && safetochange) {
-        $logdiv.css("margin-left", String($logdiv.parent().width() / 2 - $logdiv.width() / 2) + "px");
-        safetochange = false;
-        $logdiv.css("margin-top", "2000px");
-        $logdiv.css("opacity", "0");
-        $logdiv.css("display", "block");
-        $logdiv.animate({
-            opacity: 1,
-            marginTop: "-=2000"
-        }, 1000, function () {
-            safetochange = true;
-        });
-        loginopen = true;
-        homeopen = false;
-    }
-});
+
 $homebtn.click(function () {
     if (changepass) {
         $("#PassChangeScreen").fadeOut("fast");
@@ -1054,8 +990,8 @@ $homebtn.click(function () {
 });
 
 $logoutbtn.click(function () {
-    var auth2 = gapi.auth2.getAuthInstance();
-    if (auth2) auth2.signOut().then(console.log("logged out"));
+    //var auth2 = gapi.auth2.getAuthInstance();
+    //if (auth2) auth2.signOut();
     localStorage.clear();
     location.reload(true);
 });
