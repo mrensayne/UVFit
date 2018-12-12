@@ -8,9 +8,10 @@ var fs = require('fs');
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 
+//secret key for jwt
 var secret = fs.readFileSync(__dirname + '/../../../secretkey.txt').toString();
-//for detailed information on how to call these endpoints and what they do, see the included word doc
 
+//register endpoint for user, includes email verification
 router.post("/register", function (req, res) {
     var noDup = true;
 
@@ -26,6 +27,7 @@ router.post("/register", function (req, res) {
                     return res.status(500).json(err);
                 }
                 else {
+					//create user
                     var user = new User({
                         name: req.body.name,
                         email: req.body.email,
@@ -34,31 +36,31 @@ router.post("/register", function (req, res) {
                         actType: req.body.actType
                     });
                     user.save(function (err, user) {
-                        if (err) { return res.status(500).json(err); }
-                        var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex') });
-                        token.save(function (err) {
-                            if (err) { return res.status(500).json(err); }
-                            var transporter = nodemailer.createTransport({ service: 'Gmail', auth: { user: 'ece513final@gmail.com', pass: 'eceproject321!' } });
-                            console.log(req.body.email);
-                            var mailOptions = {
-                                from: 'no-reply@uvfit.com',
-                                to: req.body.email,
-                                subject: 'Account Verification Link',
-                                text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttps:\/\/' + req.headers.host + '\/home.html\/user\/confirmation?token=' + token.token + '.\n'
-                            };
-                            transporter.sendMail(mailOptions, function (err) {
-                                if (err) { return res.status(500).json(err); }
-                                res.status(201).send();
-                            });
-                        });
+                        if(err) { return res.status(500).json(err); }
+						//create confirmation token
+			var token = new Token({_userId: user._id, token: crypto.randomBytes(16).toString('hex') });
+			token.save(function (err) {
+				if (err) { return res.status(500).json(err); }
+				//send email verification
+				var transporter = nodemailer.createTransport( {service: 'Gmail', auth: {user: 'ece513final@gmail.com', pass: 'eceproject321!' }});
+				console.log(req.body.email);
+				var mailOptions = {
+					from: 'no-reply@uvfit.com',
+					to: req.body.email,
+					subject: 'Account Verification Link',
+					text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttps:\/\/' + req.headers.host + '\/home.html\/user\/confirmation?token=' + token.token + '.\n'};
+				transporter.sendMail(mailOptions, function(err) {
+					if (err) {return res.status(500).json(err); }
+					res.status(201).send();
+				});
+			});
                     });
                 }
             });
         }
     });
 });
-
-
+//log in endpoint, includes authentication
 router.get("/login", function (req, res) {
 
     User.findOne({ email: req.query.email }, function (err, user) {
@@ -67,8 +69,8 @@ router.get("/login", function (req, res) {
         } else if (!user) {
             res.status(401).json({ success: false, error: "The email or password provided was invalid." });
         } else if (!user.isVerified) {
-            res.status(401).json({ success: false, error: "Your account has not been verified." });
-        } else {
+	    res.status(401).json({ success: false, error: "Your account has not been verified." });
+	} else {
             bcrypt.compare(req.query.password, user.pass, function (err, valid) {
                 if (err) {
                     res.status(401).json({ person: {}, success: false, error: "Error authenticating. Please contact support." });
@@ -84,6 +86,7 @@ router.get("/login", function (req, res) {
         }
     });
 });
+//account endpoint to retrieve account information
 router.get("/account", function (req, res) {
     if (!req.headers["x-auth"]) {
         return res.status(401).json({ success: false, message: "No authentication token" });
@@ -110,7 +113,7 @@ router.get("/account", function (req, res) {
     }
 });
 
-function getNewApikey() { //generate a new APIKEY
+function getNewApikey() {
     var newApikey = "";
     var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -121,6 +124,7 @@ function getNewApikey() { //generate a new APIKEY
     return newApikey;
 }
 
+//update user settings
 router.post("/update", function (req, res) {
     if (!(req.headers['x-auth'] && req.headers['newuser'])) {
         return res.status(402).json({ success: false, message: "No authentication token" });
@@ -134,17 +138,7 @@ router.post("/update", function (req, res) {
                 return res.status(403).json({ success: false, message: "User does not exist." });
             }
             try {
-                User.updateOne({ _id: user._id }, { $set: { name: newUser.name, email: newUser.email, uvThresh: newUser.uvThresh, actType: newUser.actType } }).then(result => {
-                    User.findOne({ _id: user._id }, function (err, finaluser) {
-                        if (err) {
-                            return res.status(505).json("Error when getting final user");
-                        }
-                        if (finaluser) {
-                            var token = jwt.encode(finaluser, secret);
-                            res.status(200).json({ 'user': finaluser, auth: token });
-                        }
-                    });
-                });
+                User.updateOne({ _id: user._id }, { $set: { name: newUser.name, email: newUser.email, uvThresh: newUser.uvThresh, actType: newUser.actType } }).then(result => { return res.status(200).json(user); });
             } catch (e) {
                 return res.status(400).json("Failed to update DB");
             }
@@ -155,6 +149,7 @@ router.post("/update", function (req, res) {
     }
 });
 
+//add device
 router.post("/device", function (req, res) {
     if (!(req.headers["x-auth"] && req.headers["dev"])) {
         return res.status(401).json({ success: false, message: "No authentication token" });
@@ -190,21 +185,32 @@ router.post("/device", function (req, res) {
     }
 });
 
-//we need is a lat and long degree from user and thats it
-router.get("/users", function (req, res) {
-    console.log("grabbing local");
-    User.find({}, function (err, users) {
-        if (err) {
-            return res.status(500).json('error in db');
-        }
-        if (users) {
-            return res.status(200).json(users);
-        }
-        return res.status(404).json("No users found");
-    });
+router.get("/account/data", function (req, res) {
+    if (!req.headers["x-auth"]) {
+        return res.status(401).json({ success: false, message: "No authentication token" });
+    }
+
+    var authToken = req.headers["x-auth"];
+
+    try {
+        var decodedToken = jwt.decode(authToken, secret);
+        User.findOne({ email: decodedToken.email }, function (err, user) {
+            if (err) {
+                return res.status(404).json({ success: false, message: "Error Finding User" });
+            }
+            else {
+                if (!user) {
+                    return res.status(400).json({ success: false, message: "User does not exist." });
+                }
+                return res.status(200).json(user);
+            }
+        });
+    }
+    catch (ex) {
+        return res.status(401).json({ success: false, message: "Invalid authentication token." });
+    }
 });
-
-
+//configure device
 router.get("/DevSettings", function (req, res) {
     console.log(req.query.devID);
     User.findOne({ 'dev.devID': req.query.devID }, function (err, user) {
@@ -218,7 +224,7 @@ router.get("/DevSettings", function (req, res) {
             if (user.dev[x].devID == req.query.devID) {//We found the device
                 if (user.dev[x].devKey == req.query.apiKey) {// The api key is a match	
                     var tempAct = "";
-                    if (user.actType == "Auto" || user.actType == "NONE")
+                    if (user.actType == "Auto")
                         tempAct = "0";
                     if (user.actType == "Running")
                         tempAct = "1";
@@ -234,46 +240,7 @@ router.get("/DevSettings", function (req, res) {
         return res.status(403).json("-1");
     });
 });
-
-//We need the Activity ID along with The Act Type and Email of User [ eventID, email, actType] : Returns new auth token and the user
-router.get("/ChangeAct", function (req, res) {
-    console.log(req.query);
-    User.findOne({ 'email': req.query.email }, function (err, user) {
-        if (err) {
-            return res.status(500).json("-1");
-        }
-        if (!user) {
-            return res.status(404).json("-1");
-        }
-        for (var x = 0; x < user.activities.length; x++) {
-            if (user.activities[x].eventID == req.query.eventID) {
-                user.activities[x].actTypeAct = req.query.actType;
-                if (req.query.actType == "Walking") {
-                    user.activities[x].calories = JSON.parse(user.activities[x].speed)[0] * .1864; //assuming user weight of 200, taken from https://www.runnersworld.com/nutrition-weight-loss/a20825897/how-many-calories-are-you-really-burning-0/	
-                }
-                else if (req.query.actType == "Running") {
-                    //.3914 is in units [(calorie*second)/(meter) and speedArray is in units (meters/second)]
-                    user.activities[x].calories = JSON.parse(user.activities[x].speed)[0] * .3914; //assuming user weight of 200, taken from https://www.runnersworld.com/nutrition-weight-loss/a20825897/how-many-calories-are-you-really-burning-0/	
-                }
-                else {
-                    //.2114 is in units [(calorie*second)/(meter) and speedArray is in units (meters/second)]
-                    user.activities[x].calories = JSON.parse(user.activities[x].speed)[0] * .2114; //assuming user weight of 200, taken from https://www.runnersworld.com/nutrition-weight-loss/a20825897/how-many-calories-are-you-really-burning-0/	
-                }
-            }
-        }
-        try {
-            user.save(function (err, user) {
-                if (err)
-                    return res.status(501).json("error saving into dB");
-                var token = jwt.encode(user, secret);
-                return res.status(200).json({ 'auth': token, 'user': user });
-            });
-        } catch (ex) {
-            return res.status(502).json("Error saving or generating token");
-        }  
-    });
-});
-
+//remove device
 router.delete("/removeDev", function (req, res) {
     if (!req.headers["x-auth"] || !req.headers["zzrot"]) {
         return res.status(401).json({ success: false, message: "No authentication token or Device" });
@@ -318,7 +285,7 @@ router.delete("/removeDev", function (req, res) {
         return res.status(401).json({ success: false, message: "Invalid authentication token." });
     }
 });
-
+//change password
 router.post("/passChange", function (req, res) {
     console.log("In Pass");
     if (!req.headers["email"] || !req.headers["password"] || !req.headers["pass"]) {
@@ -361,35 +328,34 @@ router.post("/passChange", function (req, res) {
         }
     });
 });
+//confirmation endpoint for email verification
+router.get('/confirmation', function(req, res) {
+    Token.findOne({ token: req.query.token }, function(err, token) {
+	if (!token) {
+	    return res.redirect("/home.html");
+	}
+	User.findOne({ _id:token._userId }, function(err, user) {
+	    if (!user) {
+		console.log("user not found");
+		return res.redirect("/home.html");
+	    }
+	    if (user.isVerified) {
+		return res.redirect("/home.html");
+	    }
 
-router.get('/confirmation', function (req, res) {
-    console.log("got to confirmation");
-    Token.findOne({ token: req.query.token }, function (err, token) {
-        if (!token) {
-            console.log("token not found");
-            return res.status(400).json({ success: false, error: "Invalid Token. Your token may have expired." });
-        }
-        User.findOne({ _id: token._userId }, function (err, user) {
-            if (!user) {
-                console.log("user not found");
-                return res.status(400).json({ success: false, error: "User not found for this token." });
-            }
-            if (user.isVerified) {
-                return res.status(400).json({ success: false, error: "User has already been verified." });
-            }
-            user.isVerified = true;
-            user.save(function (err) {
-                if (err) {
-                    return res.status(500).json({ success: false, error: "Internal MongoDB error." });
-                }
-                //res.status(200).send({success: true, error: "The account has been verified. Please log in."});
-                return res.redirect("/home.html");
-            });
-        });
+	    user.isVerified = true;
+	    user.save(function(err) {
+		if (err) {
+		    return res.redirect("/home.html");
+		}
+		//res.status(200).send({success: true, error: "The account has been verified. Please log in."});
+		return res.redirect("/home.html");
+	    });
+	});
     });
 });
-
-router.post("/resend", function (req, res) {
+//future: resend email verification token
+router.post("/resend", function(req, res) {
 
 });
 
