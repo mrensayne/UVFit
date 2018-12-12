@@ -248,6 +248,17 @@ router.get("/ChangeAct", function (req, res) {
         for (var x = 0; x < user.activities.length; x++) {
             if (user.activities[x].eventID == req.query.eventID) {
                 user.activities[x].actTypeAct = req.query.actType;
+                if (req.query.actType == "Walking") {
+                    user.activities[x].calories = JSON.parse(user.activities[x].speed)[0] * .1864; //assuming user weight of 200, taken from https://www.runnersworld.com/nutrition-weight-loss/a20825897/how-many-calories-are-you-really-burning-0/	
+                }
+                else if (req.query.actType == "Running") {
+                    //.3914 is in units [(calorie*second)/(meter) and speedArray is in units (meters/second)]
+                    user.activities[x].calories = JSON.parse(user.activities[x].speed)[0] * .3914; //assuming user weight of 200, taken from https://www.runnersworld.com/nutrition-weight-loss/a20825897/how-many-calories-are-you-really-burning-0/	
+                }
+                else {
+                    //.2114 is in units [(calorie*second)/(meter) and speedArray is in units (meters/second)]
+                    user.activities[x].calories = JSON.parse(user.activities[x].speed)[0] * .2114; //assuming user weight of 200, taken from https://www.runnersworld.com/nutrition-weight-loss/a20825897/how-many-calories-are-you-really-burning-0/	
+                }
             }
         }
         try {
