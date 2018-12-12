@@ -136,6 +136,7 @@ function combinePacketsToActivities(packets) {// Finally will fix all problems w
             SpeedArray = [];
             UVArrayFinal = [];
             SpeedSummation = 0;
+            CalSummation = 0;
         }
 
 
