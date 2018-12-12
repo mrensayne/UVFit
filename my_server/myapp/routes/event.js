@@ -2,7 +2,9 @@ var express = require('express');
 var User = require('../models/user');
 var router = express.Router();
 
-//eventtime = x, eventDuration = y, eventID = 
+//for detailed information on how to call these endpoints and what they do, see the included word doc
+
+//This is used by the device to post packets, takes in b = longitude, c = latitude, d = UV, E = speed, x = time, f = eventID, a = deviceID, y = duration
 router.post("/", function(req, res) {
     var apiKeyFail = false;
     var cal = 0;

@@ -67,7 +67,7 @@ String Data::toPublishString(int index)
 	}
 	data += "],\"d\":[";
 	for (int x = index; x < endof; x++)
-	{// Latitudes
+	{// UV
 		char UV[40];
 		sprintf(UV, "%d", events[x].UV);
 		data += UV;
@@ -78,7 +78,7 @@ String Data::toPublishString(int index)
 	}
 	data += "],\"e\":[";
 	for (int x = index; x < endof; x++)
-	{// Latitudes
+	{// Speed
 		char spd[40];
 		if (events[x].speed != 0)
 			sprintf(spd, "%.2f", events[x].speed);
