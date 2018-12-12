@@ -9,7 +9,7 @@ var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 
 var secret = fs.readFileSync(__dirname + '/../../../secretkey.txt').toString();
-
+//for detailed information on how to call these endpoints and what they do, see the included word doc
 
 router.post("/register", function (req, res) {
     var noDup = true;
@@ -110,7 +110,7 @@ router.get("/account", function (req, res) {
     }
 });
 
-function getNewApikey() {
+function getNewApikey() { //generate a new APIKEY
     var newApikey = "";
     var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
