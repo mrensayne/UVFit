@@ -8,7 +8,7 @@ $uvthreshinput = $("#UVThresholdSet");
 $changePassBtn = $("#UpdPass");
 $newPassSubmit = $("#currPassSubmit");
 
-
+//Opens the update menu and initializes values to what the users values should be from db
 $updatebtn.click(function () {
     if (updateopen) {
         return;
@@ -46,6 +46,7 @@ $updatebtn.click(function () {
 
 });
 
+//The button click that sends the updated info to the db
 $update.click(function () {
     var auth = localStorage.getItem("auth");
     if (!auth)
@@ -68,6 +69,7 @@ $update.click(function () {
     });
 });
 
+//Button click that opens the Device Settings menu
 $uvThreshBtn.click(function () {
     if (UVMenuOpen) {
         return;
@@ -98,6 +100,7 @@ $uvThreshBtn.click(function () {
     }
 });
 
+//The button that submits the Device Settings settings
 $("#UvThreshSubmit").click(function () {
     var auth = localStorage.getItem("auth");
     var user = localStorage.getItem("currentUser");
@@ -126,6 +129,7 @@ $("#UvThreshSubmit").click(function () {
     });
 });
 
+//The Button click that removes a selected device while in the update account information menu
 $remdevbtn.click(function () {
     var auth = localStorage.getItem("auth");
     var user = localStorage.getItem("currentUser");
@@ -146,6 +150,7 @@ $remdevbtn.click(function () {
     });
 });
 
+//The button that opens the Password change menu
 $changePassBtn.click(function () {
     $homebtn.trigger("click");
     $homediv.css("display", "none");
@@ -153,6 +158,8 @@ $changePassBtn.click(function () {
     changepass = true;
 });
 
+
+//The button that submits the new password from the menu inputs to the DB
 $newPassSubmit.click(function () {
     var user = JSON.parse(localStorage.getItem("currentUser"));
 
