@@ -1,0 +1,143 @@
+UVFit API Documentation
+Rohin Galhotra, Brandon Sipos, Norman Hoang
+
+User Login, Registration, and Account Manipulation
+Endpoint: “/user/register”
+Type: POST
+Description: This endpoint receives registration data from the user.
+Example request:
+{
+name: “Test User”,
+email: “test@tester.com”,
+password: “testing”,
+}
+
+Endpoint: “/user/login”
+Type: GET
+Description: Use this endpoint to log into the web portal.
+Example request:
+{
+	email: “test@tester.com”,
+	password: “testing”
+}
+Example response:
+{
+person: {
+     name: “Test User”,
+     email: “test@tester.com”,
+     pass: hash,
+     uvThresh: 10,
+     actType: ACTIVITYTYPE
+},
+auth: token,
+success: true
+}
+
+Endpoint: “/user/account”
+Type: GET
+Description: Use this endpoint to load the user data into a UI or webpage. Include the auth token in the headers.
+Example response:
+{
+ name: “Test User”,
+ email: “test@tester.com”,
+ pass: hash,
+ uvThresh: 10,
+ actType: ACTIVITYTYPE
+}
+
+Endpoint: “/user/device”
+Type: POST
+Description: Use this endpoint to register a device to the user account. Include auth and device ID in the headers.
+Response returns a new APIKEY.
+
+Endpoint: “/user/update”
+Type: POST
+Description: Use this endpoint to modify user data in the database. Include auth token in the header.
+Example request:
+{
+	name: “Canada Man”,
+	email: “canadia@nowpartofthe.us”,
+	uvThresh: 15,
+	actType: ACTIVITYTYPE
+}
+
+Endpoint: “/user/removeDev”
+Type: DELETE
+Description: Use this endpoint to disassociate the current device. Include auth token and device ID in header.
+
+Endpoint: “/user/passChange”
+Type: POST
+Description: Use this endpoint to change the user’s password.
+Example request:
+{
+	email: “test@tester.com”,
+	password: “testing”,
+	pass: “newPassword”
+}
+Example response:
+{
+person: {
+     name: “Test User”,
+     email: “test@tester.com”,
+     pass: hash,
+     uvThresh: 10,
+     actType: ACTIVITYTYPE
+},
+auth: token
+}
+
+Endpoint: “/user/DevSettings”
+Type: GET
+Description: Internal use. Used to update activity type while user is in an activity. Do not use this endpoint.
+Endpoint: “/user/ChangeAct”
+Type: GET
+Description: Use this endpoint to update the type of a given activity.
+Example request:
+{
+	actType: “Walking”,
+	email: “test@test.com”,
+	eventID: EVENTID
+}
+
+Example Response: 
+{
+person: {
+     name: “Test User”,
+     email: “test@tester.com”,
+     pass: hash,
+     uvThresh: 10,
+     actType: ACTIVITYTYPE
+},
+auth: token
+}
+
+Endpoint: “/user/confirmation”
+Type: GET
+Description: Internal use. Used to verify an email address of a newly registered user. Do not use this endpoint.
+Device Interaction
+Endpoint: “/event/”
+Type: POST
+Description: Use this endpoint to POST event data for a device.
+Example request:
+{
+	_id: APIKEYHERE,
+	deviceID: DEVICEIDHERE,
+	longitude: “0”,
+	latitude: “0”,
+	UV: “0”,
+	speed: “0”,
+	eventTime: "",
+	eventDuration: "",
+	eventID: "",
+}
+Example Response: “Event Added!”
+
+Endpoint: “/event/ping”
+Type: GET
+Description: Internal use only. Used to debug connection with Photon device.
+Example Response: “ACK”
+
+Miscellaneous
+Endpoint: “/user/users”
+Type: GET
+Description: This endpoint returns the entire database of users. Include auth token in header.
